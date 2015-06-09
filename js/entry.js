@@ -15,7 +15,7 @@ d3.json('election_districts.topojson', function(error, canada) {
     if (error) return console.error(error)
     console.log(canada, svg)
 
-    var districts = topojson.feature(canada, canada.objects.election_districts).features
+    var districts = topojson.feature(canada, canada.objects.gfed000b11a_e).features
     var paths = svg.selectAll('.district').data(districts)
     paths.enter().insert('path')
         .attr('class', d => `district ${d.id}`)
