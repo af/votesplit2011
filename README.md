@@ -13,11 +13,15 @@ Then run the following (you may need to run `brew install gdal` and
 
 ```
 ogr2ogr -f GeoJSON -t_srs EPSG:4326 election_districts.json FED_CA_1.0_0_ENG.shp
-topojson --simplify-proportion 0.3 -q 2000 -o election_districts.topojson election_districts.json
+topojson -p --simplify-proportion 0.3 -q 2000 -o election_districts.topojson election_districts.json
 ```
 
 The [topojson CLI reference](https://github.com/mbostock/topojson/wiki/Command-Line-Reference)
 probably has more tips to improve the output further.
+
+Note: the `-p` in the topojson command above will preserve *all* properties in the
+output, but we will want to slim those down eventually.
+
 
 ## Running locally
 
