@@ -1,8 +1,23 @@
-var assign = require('object-assign')
+// Parse Elections Canada election results csv to a more useful csv output:
+//  * one record per riding
+//  * only track the major parties
+//  * save the electoral district {name, id, totalVotes} as well
+//
+//  Usage (see README for description of how to get full-results.csv):
+//  node csv_consolidator.js full-results.csv > simplified-results.csv
 var csv = require('fast-csv')
 
 var INPUT_FILE = process.argv[2]        // TODO: validate path to csv file
-var currentTotals = {}
+var PARTIES = [     // The parties whose data we're interested in
+    'Conservative',
+    'NDP-New Democratic Party',
+    'Liberal',
+    'Green Party',
+    'Bloc Québécois'
+];
+
+var log = console.error.bind(console)   // utility for logging to stderr
+var currentDistrictTotals = {}
 var currentDistrict = null              // will take form of { name, id }
 var outputStream = csv.createWriteStream({
     headers: true,
@@ -13,11 +28,22 @@ outputStream.pipe(process.stdout)
 
 
 // Write the current vote totals to the csv output
-function flush() {
-    var attrs = assign({
+function flushDistrict() {
+    // Get a total of all votes cast in the riding:
+    var allParties = Object.keys(currentDistrictTotals);
+    var totalVotes = allParties.reduce(function(sum, name) {
+        return sum + currentDistrictTotals[name]
+    }, 0)
+
+    var attrs = {
         districtId: currentDistrict.id,
-        districtName: currentDistrict.name
-    }, currentTotals)
+        districtName: currentDistrict.name,
+        totalVotes: totalVotes
+    };
+
+    // Add each of the major parties' vote counts to the record for this riding:
+    PARTIES.forEach(function(p) { attrs[p] = currentDistrictTotals[p] || 0 })
+
     outputStream.write(attrs)
 }
 
@@ -33,19 +59,19 @@ csv.fromPath(INPUT_FILE)
         var name = data[1]
         if (!currentDistrict) currentDistrict = { id: id, name: name }
         if (id !== currentDistrict.id) {
-            // We encountered a new district; flush the old district's totals:
-            flush()
-            console.error(currentDistrict.name)
+            // We encountered a new riding; flush the old one's totals:
+            flushDistrict()
+            log(currentDistrict.name)
 
             // Start counting for the new district
             currentDistrict.id = id
             currentDistrict.name = name
-            currentTotals = {}
+            currentDistrictTotals = {}
         }
 
         var partyName = data[13]
         var numVotes = data[17]
-        if (!currentTotals[partyName]) currentTotals[partyName] = 0
-        currentTotals[partyName] += parseInt(numVotes)
+        if (!currentDistrictTotals[partyName]) currentDistrictTotals[partyName] = 0
+        currentDistrictTotals[partyName] += parseInt(numVotes)
     })
-    .on('end', flush)
+    .on('end', flushDistrict)
