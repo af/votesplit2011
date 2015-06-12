@@ -8,13 +8,13 @@
 var csv = require('fast-csv')
 
 var INPUT_FILE = process.argv[2]        // TODO: validate path to csv file
-var PARTIES = [     // The parties whose data we're interested in
-    'Conservative',
-    'NDP-New Democratic Party',
-    'Liberal',
-    'Green Party',
-    'Bloc Québécois'
-];
+var PARTIES = {     // The parties whose data we're interested in
+    'Conservative':             'CPC',
+    'NDP-New Democratic Party': 'NDP',
+    'Liberal':                  'LPC',
+    'Green Party':              'GRN',
+    'Bloc Québécois':           'BLC'
+};
 
 var log = console.error.bind(console)   // utility for logging to stderr
 var currentDistrictTotals = {}
@@ -30,7 +30,7 @@ outputStream.pipe(process.stdout)
 // Write the current vote totals to the csv output
 function flushDistrict() {
     // Get a total of all votes cast in the riding:
-    var allParties = Object.keys(currentDistrictTotals);
+    var allParties = Object.keys(currentDistrictTotals)
     var totalVotes = allParties.reduce(function(sum, name) {
         return sum + currentDistrictTotals[name]
     }, 0)
@@ -42,7 +42,10 @@ function flushDistrict() {
     };
 
     // Add each of the major parties' vote counts to the record for this riding:
-    PARTIES.forEach(function(p) { attrs[p] = currentDistrictTotals[p] || 0 })
+    Object.keys(PARTIES).forEach(function(p) {
+        var shortName = PARTIES[p]
+        attrs[shortName] = currentDistrictTotals[p] || 0
+    })
 
     outputStream.write(attrs)
 }

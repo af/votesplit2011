@@ -3,11 +3,9 @@
 Very much a work in progress.
 
 TODO
-* the `-p` in the topojson command will preserve *all* properties in the
-output, but we will want to slim those down eventually.
-* join the topojson properties with a csv of election results
 * try alternate projections to see geojson filesize difference. (The .prj file
 contains projection details)
+* check riding results. One of the CPC ridings is going NDP in the results right now
 
 
 ## Generating Election results CSV
@@ -36,7 +34,11 @@ You'll want to choose "Federal Electoral Districts" and "Cartographic Boundary F
 Then run the following (you may need to run `npm install topojson` first):
 
 ```
-topojson -p --simplify-proportion 0.5 -q 3000 -o election_districts.topojson gfed000b11a_e.shp
+topojson -p +districtId,districtName,+totalVotes,+CPC,+LPC,+NDP,+GRN,+BLC \
+    --simplify-proportion 0.4 -q 3000 \
+    -e results.csv --id-property=+FEDUID,+districtId \
+    -o districts.topojson \
+    gfed000b11a_e.shp
 ```
 
 The [topojson CLI reference](https://github.com/mbostock/topojson/wiki/Command-Line-Reference)
