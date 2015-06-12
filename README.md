@@ -18,6 +18,8 @@ with full riding-by-riding results from Elections Canada (it's linked [from
 here](http://www.elections.ca/scripts/resval/ovr_41ge.asp?prov=&lang=e)).
 
 * Join all of the poll results csv files into one mega-csv with `cat pollresults_* > joined.csv`
+* Convert this csv's encoding from `iso-8859-1` to `utf8` with
+  `iconv -f iso-8859-1 -t utf-8 joined.csv > joined-utf8.csv`
 
 * We need to cut out a lot of fat from this csv, and sum up each riding's totals.
   Run `data_munging/csv_consolidator.js joined.csv > trimmed_results.csv` (you may need
