@@ -31,6 +31,7 @@ d3.json('districts.topojson', function(error, canada) {
     var seatTotals = {}
 
     paths.enter().insert('path')
+        .attr('vector-effect', 'non-scaling-stroke')
         .attr('class', d => {
             // Quick & dirty vote splitting simulation:
             // let split = 0.2*d.properties.CPC
