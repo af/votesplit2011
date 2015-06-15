@@ -44,6 +44,7 @@ d3.json('districts.topojson', function(error, canada) {
             return `district ${winner.name}`
         })
         .attr('d', pathProjection)
+            .append('title').text(d => d.properties.districtName)
 
     console.log(seatTotals)
 });
