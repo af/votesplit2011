@@ -2,11 +2,6 @@
 
 Very much a work in progress.
 
-TODO
-* try alternate projections to see geojson filesize difference. (The .prj file
-contains projection details)
-* check riding results. One of the CPC ridings is going NDP in the results right now
-
 
 ## Generating Election results CSV
 
@@ -65,5 +60,5 @@ http://geogratis.gc.ca/api/en/nrcan-rncan/ess-sst/6d1d8f90-1c25-5fd0-880d-138d27
 
 * https://en.wikipedia.org/wiki/Results_by_riding_of_the_Canadian_federal_election,_2011
 * http://www.elections.ca/res/cir/maps/images/ERMap_41.pdf
-* http://www.cbc.ca/news2/politics/canadavotes2011/
+* http://www.cbc.ca/news2/politics/canadavotes2011/ (wikipedia results are more accurate)
 * https://www.sfu.ca/~aheard/elections/results.html

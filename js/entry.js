@@ -2,10 +2,10 @@ let d3 = require('d3')
 let topojson = require('topojson')
 
 const WIDTH = Math.max(900, window.innerWidth);
-const HEIGHT = 600
+const HEIGHT = Math.max(400, window.innerHeight);
 
 let container;
-let projection = d3.geo.albers().translate([WIDTH / 2, HEIGHT ]);
+let projection = d3.geo.albers().translate([WIDTH / 2, HEIGHT]);
 let pathProjection = d3.geo.path().projection(projection)
 let zoom = d3.behavior.zoom().scaleExtent([1, 20])
              .on('zoom', () => {
@@ -22,7 +22,6 @@ container = svg.append('g').attr('class', 'container')
 
 d3.json('districts.topojson', function(error, canada) {
     if (error) return console.error(error)
-    //console.log(canada, svg)
 
     var districts = topojson.feature(canada, canada.objects.gfed000b11a_e).features
     var paths = container.selectAll('.district').data(districts)
@@ -38,8 +37,9 @@ d3.json('districts.topojson', function(error, canada) {
             // d.properties.NDP = d.properties.NDP + split
             // d.properties.CPC = d.properties.CPC - split
 
+            let winReducer = (max, next) => next.votes > max.votes ? next : max
             let winner = parties.map(party => ({ name: party, votes: d.properties[party] }))
-                                .reduce(((max, next) => next.votes > max.votes ? next : max), { votes: 0 })
+                                .reduce(winReducer, { votes: 0 })
             seatTotals[winner.name] = seatTotals[winner.name] + 1 || 1
             return `district ${winner.name}`
         })
