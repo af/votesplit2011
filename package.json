@@ -9,8 +9,10 @@
   "author": "Aaron Franks (http://aaronfranks.com/)",
   "license": "MIT",
   "dependencies": {
-    "d3": "^3.5.5",
-    "fast-csv": "^0.6.0",
+    "d3": "3.5.5",
+    "fast-csv": "0.6.0",
+    "jsnox": "1.0.0",
+    "react": "0.13.3",
     "topojson": "^1.6.18"
   },
   "devDependencies": {
