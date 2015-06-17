@@ -11,8 +11,13 @@ let seatTotals = {}
 
 let ElectionMap = React.createClass({
     displayName: 'ElectionMap',
+    propTypes: {
+        onResultsChange: React.PropTypes.func.isRequired
+    },
 
-    componentDidMount: function() {
+    // FIXME: need to break down this massive method:
+    componentDidMount() {
+        let component = this
         let container
         let projection = d3.geo.albers().translate([WIDTH / 2, HEIGHT])
         let pathProjection = d3.geo.path().projection(projection)
@@ -48,11 +53,11 @@ let ElectionMap = React.createClass({
                 .attr('d', pathProjection)
                     .append('title').text(d => d.properties.districtName)
 
-            console.log(seatTotals)
+            component.props.onResultsChange(seatTotals)
         })
     },
 
-    render: function() {
+    render() {
         return d('svg', {
             width: WIDTH,
             height: HEIGHT,
@@ -61,4 +66,37 @@ let ElectionMap = React.createClass({
     }
 })
 
-React.render(d(ElectionMap), document.body)
+
+let Sidebar = React.createClass({
+    displayName: 'Sidebar',
+
+    render() {
+        let results = this.props.seatTotals
+        let resultsKeys = Object.keys(results)
+        return d('aside', [
+            'Totals',
+            d('div', resultsKeys.map(k => d('div', { key: k }, `${k} ... ${results[k]}`)))
+        ])
+    }
+})
+
+
+let App = React.createClass({
+    displayName: 'App',
+    getInitialState() {
+        return { seatTotals: {} }
+    },
+
+    handleChangedResults(seatTotals) {
+        this.setState({ seatTotals: seatTotals })
+    },
+
+    render() {
+        return d('div', [
+            d(Sidebar, { seatTotals: seatTotals }),
+            d(ElectionMap, { onResultsChange: this.handleChangedResults })
+        ])
+    }
+})
+
+React.render(d(App), document.body)
