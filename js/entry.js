@@ -67,15 +67,40 @@ let ElectionMap = React.createClass({
 })
 
 
+let BarChart = React.createClass({
+    displayName: 'BarChart',
+    propTypes: {
+        dataMap: React.PropTypes.object.isRequired,
+        barMax: React.PropTypes.number.isRequired
+    },
+
+    render() {
+        let results = this.props.dataMap
+        let resultsKeys = Object.keys(results)
+        return d('div.barChart',
+            resultsKeys.map(partyKey => {
+                let value = results[partyKey]
+                let barScale = 100*value/this.props.barMax
+                return d(`div.barContainer.${partyKey}`, { key: partyKey }, [
+                    d('span.text', `${partyKey} ... ${value}`),
+                    d('div.bar', { style: { width: barScale + '%' }})
+                ])
+            })
+        )
+    }
+})
+
+
 let Sidebar = React.createClass({
     displayName: 'Sidebar',
+    propTypes: {
+        seatTotals: React.PropTypes.object.isRequired
+    },
 
     render() {
         let results = this.props.seatTotals
-        let resultsKeys = Object.keys(results)
         return d('aside', [
-            'Totals',
-            d('div', resultsKeys.map(k => d('div', { key: k }, `${k} ... ${results[k]}`)))
+            d(BarChart, { dataMap: results, barMax: 308 })
         ])
     }
 })

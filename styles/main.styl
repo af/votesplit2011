@@ -1,5 +1,12 @@
+$CPC = #0B4695
+$NDP = #F48416
+$LPC = #ED2F23
+$GRN = #71C50F
+$BLC = #00ABF1
+
 body
     box-sizing: border-box
+    font-family: 'Open Sans'        // TODO: add font files
 
 .district
     cursor: pointer
@@ -9,12 +16,46 @@ body
         opacity: 0.8
 
     &.CPC
-        fill: #0B4695
+        fill: $CPC
     &.NDP
-        fill: #F48416
+        fill: $NDP
     &.LPC
-        fill: #ED2F23
+        fill: $LPC
     &.GRN
-        fill: #71C50F
+        fill: $GRN
     &.BLC
-        fill: #00ABF1
+        fill: $BLC
+
+.barContainer
+    position: relative
+
+    .text
+        position: absolute
+        left: 5px
+        line-height: 25px
+        color: white
+        text-shadow: 1px 1px 3px rgba(#000, 0.5)
+
+    &.CPC
+        .bar
+            background-color: $CPC
+    &.NDP
+        .bar
+            background-color: $NDP
+    &.LPC
+        .bar
+            background-color: $LPC
+    &.GRN
+        .bar
+            background-color: $GRN
+    &.BLC
+        .bar
+            background-color: $BLC
+
+    .bar
+        height: 25px
+        background: #ddd
+        transition: width 0.3s
+
+        &:before
+            content: ''
