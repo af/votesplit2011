@@ -77,6 +77,8 @@ let BarChart = React.createClass({
     render() {
         let results = this.props.dataMap
         let resultsKeys = Object.keys(results)
+        resultsKeys.sort((v1, v2) => results[v2] - results[v1]);
+
         return d('div.barChart',
             resultsKeys.map(partyKey => {
                 let value = results[partyKey]
