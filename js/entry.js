@@ -6,6 +6,7 @@ let topojson = require('topojson')
 const WIDTH = Math.max(900, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
 const PARTIES = 'CPC,LPC,NDP,GRN,BLC'.split(',')
+const SEAT_COUNT = 308
 let seatTotals = {}
 
 
@@ -93,6 +94,29 @@ let BarChart = React.createClass({
 })
 
 
+let SplitterForm = React.createClass({
+    displayName: 'SplitterForm',
+
+    render: function() {
+        let toOptions = n => d('option', { key: n }, n)
+        return d('form.splitForm', [
+            d('label.percent', [
+                d('select.percent', [0, 5, 10, 20, 50, 100].map(toOptions)),
+                '% of',
+            ]),
+            d('label.from', [
+                d('select.from', PARTIES.map(toOptions)),
+                'voters went',
+            ]),
+            d('label.to', [
+                d('select.to', PARTIES.map(toOptions)),
+                'instead'
+            ])
+        ])
+    }
+})
+
+
 let Sidebar = React.createClass({
     displayName: 'Sidebar',
     propTypes: {
@@ -102,7 +126,10 @@ let Sidebar = React.createClass({
     render() {
         let results = this.props.seatTotals
         return d('aside', [
-            d(BarChart, { dataMap: results, barMax: 308 })
+            d('h1', '2011 Vote Splitter'),
+            d(BarChart, { dataMap: results, barMax: SEAT_COUNT }),
+            d('h2', 'if...'),
+            d(SplitterForm, {})
         ])
     }
 })

@@ -9,16 +9,40 @@ $BLC = #00ABF1
 
 body
     box-sizing: border-box
-    font-family: 'Open Sans'        // TODO: add font files
+    font-family: 'Source Code Pro'        // TODO: add font files
+    -webkit-font-smoothing: antialiased
     margin: 0
 
 aside
     position: absolute
     left: 0
     top: 0
-    width: 300px
+    width: 250px
     height: 100vh
     padding: 10px
+    background: rgba(white, 0.5)
+
+    h1
+        font-size: 1.2em
+        margin: 0 0 10px
+
+    h2
+        font-size: 1.1em
+        margin: 40px 0 0
+
+.splitForm
+    margin-bottom: 20px
+    text-shadow: 1px 1px 1px white, 0 0 1px white
+
+    label
+        display: flex
+        alignItems: center
+        line-height: 0.9
+        margin: 0.2em 0
+
+    select
+        margin-right: 3px
+
 
 .district
     cursor: pointer
