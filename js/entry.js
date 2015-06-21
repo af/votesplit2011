@@ -97,19 +97,31 @@ let BarChart = React.createClass({
 let SplitterForm = React.createClass({
     displayName: 'SplitterForm',
 
-    render: function() {
-        let toOptions = n => d('option', { key: n }, n)
+    handleChange() {
+        let split = {
+            from: this.refs.from.getDOMNode().value,
+            to: this.refs.to.getDOMNode().value,
+            percent: +this.refs.percent.getDOMNode().value
+        }
+        console.log(split)
+    },
+
+    render() {
+        let arrayToOptions = n => d('option', { key: n }, n)
+        let selectProps = { onChange: this.handleChange }
+        let percentChoices = [0, 5, 10, 20, 50, 100]
+
         return d('form.splitForm', [
             d('label.percent', [
-                d('select.percent', [0, 5, 10, 20, 50, 100].map(toOptions)),
+                d('select@percent', selectProps, percentChoices.map(arrayToOptions)),
                 '% of',
             ]),
             d('label.from', [
-                d('select.from', PARTIES.map(toOptions)),
+                d('select@from', selectProps, PARTIES.map(arrayToOptions)),
                 'voters went',
             ]),
             d('label.to', [
-                d('select.to', PARTIES.map(toOptions)),
+                d('select@to', selectProps, PARTIES.map(arrayToOptions)),
                 'instead'
             ])
         ])
