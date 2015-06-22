@@ -7,14 +7,12 @@ const WIDTH = Math.max(900, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
 const PARTIES = 'CPC,LPC,NDP,GRN,BLC'.split(',')
 const SEAT_COUNT = 308
-let seatTotals = {}
 
 
 let ElectionMap = React.createClass({
     displayName: 'ElectionMap',
     propTypes: {
-        districts: React.PropTypes.arrayOf(React.PropTypes.object),
-        onResultsChange: React.PropTypes.func.isRequired
+        districts: React.PropTypes.arrayOf(React.PropTypes.object)
     },
 
     componentDidMount() {
@@ -42,22 +40,9 @@ let ElectionMap = React.createClass({
 
         paths.enter().insert('path')
             .attr('vector-effect', 'non-scaling-stroke')
-            .attr('class', d => {
-                // Quick & dirty vote splitting simulation:
-                // let split = 0.2*d.properties.CPC
-                // d.properties.NDP = d.properties.NDP + split
-                // d.properties.CPC = d.properties.CPC - split
-
-                let winReducer = (max, next) => next.votes > max.votes ? next : max
-                let winner = PARTIES.map(party => ({ name: party, votes: d.properties[party] }))
-                                    .reduce(winReducer, { votes: 0 })
-                seatTotals[winner.name] = seatTotals[winner.name] + 1 || 1
-                return `district ${winner.name}`
-            })
+            .attr('class', d => `district ${d.properties.winner.name}`)
             .attr('d', this.pathProjection)
                 .append('title').text(d => d.properties.districtName)
-
-        this.props.onResultsChange(seatTotals)
     },
 
     render() {
@@ -158,9 +143,23 @@ let App = React.createClass({
     componentDidMount() {
         d3.json('districts.topojson', (error, canada) => {
             if (error) return console.error(error)
-            this.setState({
-                districts: topojson.feature(canada, canada.objects.gfed000b11a_e).features
+
+            let seatTotals = {}
+            let districts = topojson.feature(canada, canada.objects.gfed000b11a_e).features
+            districts.forEach(d => {
+                // Quick & dirty vote splitting simulation:
+                // let split = 0.2*d.properties.CPC
+                // d.properties.NDP = d.properties.NDP + split
+                // d.properties.CPC = d.properties.CPC - split
+
+                let winReducer = (max, next) => next.votes > max.votes ? next : max
+                let winner = PARTIES.map(party => ({ name: party, votes: d.properties[party] }))
+                                    .reduce(winReducer, { votes: 0 })
+                d.properties.winner = winner
+                seatTotals[winner.name] = seatTotals[winner.name] + 1 || 1
             })
+
+            this.setState({ seatTotals, districts })
         })
     },
 
@@ -170,11 +169,8 @@ let App = React.createClass({
 
     render() {
         return d('div', [
-            d(Sidebar, { seatTotals: seatTotals }),
-            d(ElectionMap, {
-                districts: this.state.districts,
-                onResultsChange: this.handleChangedResults
-            })
+            d(Sidebar, { seatTotals: this.state.seatTotals }),
+            d(ElectionMap, { districts: this.state.districts })
         ])
     }
 })
