@@ -13,49 +13,51 @@ let seatTotals = {}
 let ElectionMap = React.createClass({
     displayName: 'ElectionMap',
     propTypes: {
+        districts: React.PropTypes.arrayOf(React.PropTypes.object),
         onResultsChange: React.PropTypes.func.isRequired
     },
 
-    // FIXME: need to break down this massive method:
     componentDidMount() {
-        let component = this
-        let container
-        let projection = d3.geo.albers().translate([WIDTH / 2, HEIGHT])
-        let pathProjection = d3.geo.path().projection(projection)
-        let zoom = d3.behavior.zoom().scaleExtent([1, 20])
-                     .on('zoom', () => {
-                        let evt = d3.event
-                        container.attr('transform', `translate(${evt.translate})scale(${evt.scale})`)
-                     })
+        let svg = d3.select(this.getDOMNode())
+        this.vizRoot = svg.append('g').attr('class', 'container')
+        this.projection = d3.geo.albers().translate([WIDTH / 2, HEIGHT])
+        this.pathProjection = d3.geo.path().projection(this.projection)
 
-        let svg = d3.select(this.getDOMNode()).call(zoom)
-        container = svg.append('g').attr('class', 'container')
+        svg.call(d3.behavior.zoom().scaleExtent([1, 20]).on('zoom', () => {
+            let evt = d3.event
+            this.vizRoot.attr('transform', `translate(${evt.translate})scale(${evt.scale})`)
+        }))
+    },
 
-        d3.json('districts.topojson', function(error, canada) {
-            if (error) return console.error(error)
+    // Don't ever re-render the svg element, but redraw the districts if the
+    // input data has changed.
+    shouldComponentUpdate(nextProps) {
+        let shouldRedraw = (nextProps.districts !== this.props.districts)
+        if (shouldRedraw) this.drawDistricts(nextProps.districts)
+        return false
+    },
 
-            var districts = topojson.feature(canada, canada.objects.gfed000b11a_e).features
-            var paths = container.selectAll('.district').data(districts)
+    drawDistricts(districts) {
+        let paths = this.vizRoot.selectAll('.district').data(districts)
 
-            paths.enter().insert('path')
-                .attr('vector-effect', 'non-scaling-stroke')
-                .attr('class', d => {
-                    // Quick & dirty vote splitting simulation:
-                    // let split = 0.2*d.properties.CPC
-                    // d.properties.NDP = d.properties.NDP + split
-                    // d.properties.CPC = d.properties.CPC - split
+        paths.enter().insert('path')
+            .attr('vector-effect', 'non-scaling-stroke')
+            .attr('class', d => {
+                // Quick & dirty vote splitting simulation:
+                // let split = 0.2*d.properties.CPC
+                // d.properties.NDP = d.properties.NDP + split
+                // d.properties.CPC = d.properties.CPC - split
 
-                    let winReducer = (max, next) => next.votes > max.votes ? next : max
-                    let winner = PARTIES.map(party => ({ name: party, votes: d.properties[party] }))
-                                        .reduce(winReducer, { votes: 0 })
-                    seatTotals[winner.name] = seatTotals[winner.name] + 1 || 1
-                    return `district ${winner.name}`
-                })
-                .attr('d', pathProjection)
-                    .append('title').text(d => d.properties.districtName)
+                let winReducer = (max, next) => next.votes > max.votes ? next : max
+                let winner = PARTIES.map(party => ({ name: party, votes: d.properties[party] }))
+                                    .reduce(winReducer, { votes: 0 })
+                seatTotals[winner.name] = seatTotals[winner.name] + 1 || 1
+                return `district ${winner.name}`
+            })
+            .attr('d', this.pathProjection)
+                .append('title').text(d => d.properties.districtName)
 
-            component.props.onResultsChange(seatTotals)
-        })
+        this.props.onResultsChange(seatTotals)
     },
 
     render() {
@@ -150,7 +152,16 @@ let Sidebar = React.createClass({
 let App = React.createClass({
     displayName: 'App',
     getInitialState() {
-        return { seatTotals: {} }
+        return { seatTotals: {}, districts: null }
+    },
+
+    componentDidMount() {
+        d3.json('districts.topojson', (error, canada) => {
+            if (error) return console.error(error)
+            this.setState({
+                districts: topojson.feature(canada, canada.objects.gfed000b11a_e).features
+            })
+        })
     },
 
     handleChangedResults(seatTotals) {
@@ -160,7 +171,10 @@ let App = React.createClass({
     render() {
         return d('div', [
             d(Sidebar, { seatTotals: seatTotals }),
-            d(ElectionMap, { onResultsChange: this.handleChangedResults })
+            d(ElectionMap, {
+                districts: this.state.districts,
+                onResultsChange: this.handleChangedResults
+            })
         ])
     }
 })
