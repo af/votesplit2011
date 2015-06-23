@@ -7,6 +7,11 @@ const WIDTH = Math.max(900, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
 const PARTIES = 'CPC,LPC,NDP,GRN,BLC'.split(',')
 const SEAT_COUNT = 308
+let shallowClone = o => {
+    let newObj = {}
+    for (let x in o) newObj[x] = o[x]
+    return newObj
+}
 
 
 let ElectionMap = React.createClass({
@@ -39,7 +44,7 @@ let ElectionMap = React.createClass({
         let paths = this.vizRoot.selectAll('.district').data(districts)
 
         paths.enter().insert('path')
-            .attr('vector-effect', 'non-scaling-stroke')
+        paths.attr('vector-effect', 'non-scaling-stroke')
             .attr('class', d => `district ${d.properties.winner.name}`)
             .attr('d', this.pathProjection)
                 .append('title').text(d => d.properties.districtName)
@@ -83,6 +88,9 @@ let BarChart = React.createClass({
 
 let SplitterForm = React.createClass({
     displayName: 'SplitterForm',
+    propTypes: {
+        changeCallback: React.PropTypes.func.isRequired
+    },
 
     handleChange() {
         let split = {
@@ -90,7 +98,7 @@ let SplitterForm = React.createClass({
             to: this.refs.to.getDOMNode().value,
             percent: +this.refs.percent.getDOMNode().value
         }
-        console.log(split)
+        if (split.from !== split.to) this.props.changeCallback(split)
     },
 
     render() {
@@ -116,51 +124,49 @@ let SplitterForm = React.createClass({
 })
 
 
-let Sidebar = React.createClass({
-    displayName: 'Sidebar',
-    propTypes: {
-        seatTotals: React.PropTypes.object.isRequired
-    },
-
-    render() {
-        let results = this.props.seatTotals
-        return d('aside', [
-            d('h1', '2011 Vote Splitter'),
-            d(BarChart, { dataMap: results, barMax: SEAT_COUNT }),
-            d('h2', 'if...'),
-            d(SplitterForm, {})
-        ])
-    }
-})
-
-
 let App = React.createClass({
     displayName: 'App',
     getInitialState() {
-        return { seatTotals: {}, districts: null }
+        return { seatTotals: {}, districts: null, originalDistricts: null }
     },
 
     componentDidMount() {
         d3.json('districts.topojson', (error, canada) => {
             if (error) return console.error(error)
 
-            let seatTotals = {}
             let districts = topojson.feature(canada, canada.objects.gfed000b11a_e).features
-            districts.forEach(d => {
-                // Quick & dirty vote splitting simulation:
-                // let split = 0.2*d.properties.CPC
-                // d.properties.NDP = d.properties.NDP + split
-                // d.properties.CPC = d.properties.CPC - split
-
-                let winReducer = (max, next) => next.votes > max.votes ? next : max
-                let winner = PARTIES.map(party => ({ name: party, votes: d.properties[party] }))
-                                    .reduce(winReducer, { votes: 0 })
-                d.properties.winner = winner
-                seatTotals[winner.name] = seatTotals[winner.name] + 1 || 1
-            })
-
-            this.setState({ seatTotals, districts })
+            this.setState({ originalDistricts: districts })
+            this.computeVotes()
         })
+    },
+
+    computeVotes(splitObj, districts) {
+        console.log('COMPUTING with', splitObj)
+
+        // Clone the districts arrays so we don't overwrite the original data:
+        let seatTotals = {}
+        let actualVotes = this.state.originalDistricts.map(d => shallowClone(d.properties))
+        districts = districts || this.state.originalDistricts.map(d => shallowClone(d))
+
+        districts = districts.map((d, idx) => {
+            // Apply the vote split:
+            let votes = actualVotes[idx]
+            if (splitObj && splitObj.percent) {
+                let splitAmount = (splitObj.percent * votes[splitObj.from]) / 100
+                votes[splitObj.to] = votes[splitObj.to] + splitAmount
+                votes[splitObj.from] = votes[splitObj.from] - splitAmount
+            }
+
+            let winReducer = (max, next) => next.votes > max.votes ? next : max
+            let winner = PARTIES.map(party => ({ name: party, votes: votes[party] }))
+                                .reduce(winReducer, { votes: 0 })
+            d.properties = votes
+            d.properties.winner = winner
+            seatTotals[winner.name] = seatTotals[winner.name] + 1 || 1
+            return d
+        })
+
+        this.setState({ seatTotals, districts })
     },
 
     handleChangedResults(seatTotals) {
@@ -169,7 +175,14 @@ let App = React.createClass({
 
     render() {
         return d('div', [
-            d(Sidebar, { seatTotals: this.state.seatTotals }),
+            d('aside', [
+                d('h1', '2011 Vote Splitter'),
+                d(BarChart, { dataMap: this.state.seatTotals, barMax: SEAT_COUNT }),
+                d('h2', 'if...'),
+                d(SplitterForm, {
+                    changeCallback: (split) => this.computeVotes(split, this.state.districts)
+                })
+            ]),
             d(ElectionMap, { districts: this.state.districts })
         ])
     }
