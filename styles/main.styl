@@ -4,6 +4,8 @@ $LPC = #ED2F23
 $GRN = #71C50F
 $BLC = #00ABF1
 
+$barHeight = 25px
+
 *
     box-sizing: border-box
 
@@ -66,14 +68,28 @@ aside
 .barContainer
     position: relative
 
+    .logo
+        width: $barHeight
+        height: $barHeight
+        float: left
+
     .total
         position: absolute
         right: 5px
         text-align: right
-        line-height: 25px
+        line-height: $barHeight
         font-weight: bold
         color: black
         text-shadow: 1px 1px 1px white
+
+    .bar
+        height: $barHeight
+        background: #ddd
+        transition: width 1s
+        margin-left: 1.2 * $barHeight
+
+        &:before
+            content: ''
 
     &.CPC
         .bar
@@ -100,10 +116,3 @@ aside
             background-color: $BLC
         .total
             color: $BLC
-    .bar
-        height: 25px
-        background: #ddd
-        transition: width 1s
-
-        &:before
-            content: ''
