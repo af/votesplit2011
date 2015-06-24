@@ -77,7 +77,7 @@ let BarChart = React.createClass({
                 let value = results[partyKey]
                 let barScale = 100*value/this.props.barMax
                 return d(`div.barContainer.${partyKey}`, [
-                    d('span.text', `${partyKey} ... ${value}`),
+                    d('span.total', '' + value),        // FIXME: jsnox number treatment
                     d('div.bar', { style: { width: barScale + '%' }})
                 ])
             })

@@ -17,8 +17,9 @@ aside
     position: absolute
     left: 0
     top: 0
-    width: 250px
+    width: 240px
     padding: 10px
+    padding-right: 0
     background: rgba(white, 0.5)
 
     h1
@@ -65,29 +66,40 @@ aside
 .barContainer
     position: relative
 
-    .text
+    .total
         position: absolute
-        left: 5px
+        right: 5px
+        text-align: right
         line-height: 25px
-        color: white
-        text-shadow: 1px 1px 3px rgba(#000, 0.5)
+        font-weight: bold
+        color: black
+        text-shadow: 1px 1px 1px white
 
     &.CPC
         .bar
             background-color: $CPC
+        .total
+            color: $CPC
     &.NDP
         .bar
             background-color: $NDP
+        .total
+            color: $NDP
     &.LPC
         .bar
             background-color: $LPC
+        .total
+            color: $LPC
     &.GRN
         .bar
             background-color: $GRN
+        .total
+            color: $GRN
     &.BLC
         .bar
             background-color: $BLC
-
+        .total
+            color: $BLC
     .bar
         height: 25px
         background: #ddd
