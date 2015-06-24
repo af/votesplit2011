@@ -17,7 +17,8 @@ let shallowClone = o => {
 let ElectionMap = React.createClass({
     displayName: 'ElectionMap',
     propTypes: {
-        districts: React.PropTypes.arrayOf(React.PropTypes.object)
+        districts: React.PropTypes.arrayOf(React.PropTypes.object),
+        onDistrictSelected: React.PropTypes.func
     },
 
     componentDidMount() {
@@ -41,14 +42,26 @@ let ElectionMap = React.createClass({
     },
 
     drawDistricts(districts) {
+        let component = this
         let paths = this.vizRoot.selectAll('.district')
                         .data(districts, d => d.properties.districtId)
 
         paths.enter().insert('path')
-        paths.attr('vector-effect', 'non-scaling-stroke')
-            .attr('class', d => `district ${d.properties.winner.name}`)
+        paths
+            .attr('vector-effect', 'non-scaling-stroke')
             .attr('d', this.pathProjection)
+            .attr('class', d => `district ${d.properties.winner.name}`)
+            .on('click', function(d) {
+                // FIXME: toggle selected district (allow deselection)
+                component.selectDistrict(d.properties)
+                d3.selectAll('.district').classed('selected', false)
+                d3.select(this).classed('selected', true)
+            })
                 .append('title').text(d => d.properties.districtName)
+    },
+
+    selectDistrict(districtData) {
+        if (this.props.onDistrictSelected) this.props.onDistrictSelected(districtData)
     },
 
     render() {
@@ -83,6 +96,18 @@ let BarChart = React.createClass({
                 ])
             })
         )
+    }
+})
+
+
+let DistrictInfo = React.createClass({
+    displayName: 'DistrictInfo',
+
+    render: function() {
+        return d('div', [
+            d('h2', this.props.district.districtName),
+            d(BarChart, { dataMap: this.props.district, barMax: 60000 })
+        ])
     }
 })
 
@@ -128,7 +153,12 @@ let SplitterForm = React.createClass({
 let App = React.createClass({
     displayName: 'App',
     getInitialState() {
-        return { seatTotals: null, districts: null, originalDistricts: null }
+        return {
+            seatTotals: null,
+            districts: null,
+            selectedDistrict: null,
+            originalDistricts: null
+        }
     },
 
     componentDidMount() {
@@ -142,8 +172,6 @@ let App = React.createClass({
     },
 
     computeVotes(splitObj, districts) {
-        console.log('COMPUTING with', splitObj)
-
         // Clone the districts arrays so we don't overwrite the original data:
         let seatTotals = {}
         let actualVotes = this.state.originalDistricts.map(d => shallowClone(d.properties))
@@ -178,9 +206,13 @@ let App = React.createClass({
                 d('h2', 'if...'),
                 d(SplitterForm, {
                     changeCallback: (split) => this.computeVotes(split, this.state.districts)
-                })
+                }),
+                this.state.selectedDistrict && d(DistrictInfo, { district: this.state.selectedDistrict })
             ]),
-            d(ElectionMap, { districts: this.state.districts })
+            d(ElectionMap, {
+                districts: this.state.districts,
+                onDistrictSelected: data => this.setState({ selectedDistrict: data })
+            })
         ])
     }
 })
