@@ -74,7 +74,7 @@ let BarChart = React.createClass({
 
         return d('div.barChart',
             PARTIES.map(partyKey => {
-                let value = results[partyKey]
+                let value = results[partyKey] || 0
                 let barScale = 100*value/this.props.barMax
                 return d(`div.barContainer.${partyKey}`, [
                     d('img.logo', { src: `/logos/${partyKey}.svg` }),
