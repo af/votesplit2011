@@ -5,7 +5,7 @@ let topojson = require('topojson')
 
 const WIDTH = Math.max(900, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
-const PARTIES = 'CPC,LPC,NDP,GRN,BLC'.split(',')
+const PARTIES = 'CPC,NDP,LPC,BLC,GRN'.split(',')
 const SEAT_COUNT = 308
 let shallowClone = o => {
     let newObj = {}
@@ -41,7 +41,8 @@ let ElectionMap = React.createClass({
     },
 
     drawDistricts(districts) {
-        let paths = this.vizRoot.selectAll('.district').data(districts)
+        let paths = this.vizRoot.selectAll('.district')
+                        .data(districts, d => d.properties.districtId)
 
         paths.enter().insert('path')
         paths.attr('vector-effect', 'non-scaling-stroke')
@@ -69,14 +70,13 @@ let BarChart = React.createClass({
 
     render() {
         let results = this.props.dataMap
-        let resultsKeys = Object.keys(results)
-        resultsKeys.sort((v1, v2) => results[v2] - results[v1]);
+        if (!results) return d('div.barChart');
 
         return d('div.barChart',
-            resultsKeys.map(partyKey => {
+            PARTIES.map(partyKey => {
                 let value = results[partyKey]
                 let barScale = 100*value/this.props.barMax
-                return d(`div.barContainer.${partyKey}`, { key: partyKey }, [
+                return d(`div.barContainer.${partyKey}`, [
                     d('span.text', `${partyKey} ... ${value}`),
                     d('div.bar', { style: { width: barScale + '%' }})
                 ])
@@ -127,7 +127,7 @@ let SplitterForm = React.createClass({
 let App = React.createClass({
     displayName: 'App',
     getInitialState() {
-        return { seatTotals: {}, districts: null, originalDistricts: null }
+        return { seatTotals: null, districts: null, originalDistricts: null }
     },
 
     componentDidMount() {
@@ -167,10 +167,6 @@ let App = React.createClass({
         })
 
         this.setState({ seatTotals, districts })
-    },
-
-    handleChangedResults(seatTotals) {
-        this.setState({ seatTotals: seatTotals })
     },
 
     render() {
