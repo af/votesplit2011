@@ -20,6 +20,7 @@ let ElectionMap = React.createClass({
         districts: React.PropTypes.arrayOf(React.PropTypes.object),
         onDistrictSelected: React.PropTypes.func
     },
+    getInitialState() { return { selectedDistrictId: null } },
 
     componentDidMount() {
         let svg = d3.select(this.getDOMNode())
@@ -53,15 +54,24 @@ let ElectionMap = React.createClass({
             .attr('class', d => `district ${d.properties.winner.name}`)
             .on('click', function(d) {
                 // FIXME: toggle selected district (allow deselection)
-                component.selectDistrict(d.properties)
+                let selectedId = component.selectDistrict(d.properties)
+                let deselect = (selectedId === null)
                 d3.selectAll('.district').classed('selected', false)
-                d3.select(this).classed('selected', true)
+                d3.select(this).classed('selected', !deselect)
             })
                 .append('title').text(d => d.properties.districtName)
     },
 
     selectDistrict(districtData) {
-        if (this.props.onDistrictSelected) this.props.onDistrictSelected(districtData)
+        let id = districtData.districtId
+        let shouldDeselect = (this.state.selectedDistrictId === id)
+        if (this.props.onDistrictSelected) {
+            this.props.onDistrictSelected(shouldDeselect ? null : districtData)
+        }
+        this.setState({
+            selectedDistrictId: shouldDeselect ? null : id
+        })
+        return this.state.selectedDistrictId
     },
 
     render() {
