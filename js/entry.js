@@ -78,7 +78,8 @@ let BarChart = React.createClass({
     displayName: 'BarChart',
     propTypes: {
         dataMap: React.PropTypes.object.isRequired,
-        barMax: React.PropTypes.number.isRequired
+        barMax: React.PropTypes.number.isRequired,
+        onZeroValue: React.PropTypes.func
     },
 
     render() {
@@ -89,6 +90,8 @@ let BarChart = React.createClass({
             PARTIES.map(partyKey => {
                 let value = results[partyKey] || 0
                 let barScale = 100*value/this.props.barMax
+
+                if (!value && this.props.onZeroValue) return this.props.onZeroValue()
                 return d(`div.barContainer.${partyKey}`, [
                     d('img.logo', { src: `/logos/${partyKey}.svg` }),
                     d('span.total', '' + value),        // FIXME: jsnox number treatment
@@ -106,7 +109,11 @@ let DistrictInfo = React.createClass({
     render: function() {
         return d('div', [
             d('h2', this.props.district.districtName),
-            d(BarChart, { dataMap: this.props.district, barMax: 60000 })
+            d(BarChart, {
+                dataMap: this.props.district,
+                barMax: 60000,
+                onZeroValue: () => null
+            })
         ])
     }
 })
@@ -180,8 +187,8 @@ let App = React.createClass({
         districts = districts.map((d, idx) => {
             // Apply the vote split:
             let votes = actualVotes[idx]
-            if (splitObj && splitObj.percent) {
-                let splitAmount = (splitObj.percent * votes[splitObj.from]) / 100
+            if (splitObj && votes[splitObj.to]) { // Assume no candidate in riding if 0 votes
+                let splitAmount = Math.round((splitObj.percent * votes[splitObj.from]) / 100)
                 votes[splitObj.to] = votes[splitObj.to] + splitAmount
                 votes[splitObj.from] = votes[splitObj.from] - splitAmount
             }
