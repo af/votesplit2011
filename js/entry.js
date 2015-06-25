@@ -93,7 +93,7 @@ let BarChart = React.createClass({
 
                 if (!value && this.props.onZeroValue) return this.props.onZeroValue()
                 return d(`div.barContainer.${partyKey}`, [
-                    d('img.logo', { src: `/logos/${partyKey}.svg` }),
+                    d('img.logo', { src: `/logos/${partyKey}.svg`, alt: partyKey }),
                     d('span.total', '' + value),        // FIXME: jsnox number treatment
                     d('div.bar', { style: { width: barScale + '%' }})
                 ])
@@ -107,12 +107,13 @@ let DistrictInfo = React.createClass({
     displayName: 'DistrictInfo',
 
     render: function() {
-        return d('div', [
-            d('h2', this.props.district.districtName),
+        let name = this.props.district.districtName.replace(/--/g, '—')
+        return d('div.districtInfo', [
+            d('h2', name),
             d(BarChart, {
                 dataMap: this.props.district,
                 barMax: 60000,
-                onZeroValue: () => null
+                onZeroValue: () => null     // Don't render bars where there are no votes
             })
         ])
     }

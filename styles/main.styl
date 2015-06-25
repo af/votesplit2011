@@ -71,6 +71,9 @@ aside
 
 .barContainer
     position: relative
+    display: flex
+    align-items: center
+    height: $barHeight
     margin-bottom: 2px
 
     .logo
@@ -91,7 +94,7 @@ aside
         height: $barHeight
         background: #ddd
         transition: width 1s
-        margin-left: 1.2 * $barHeight
+        margin-left: 5px
 
         &:before
             content: ''
@@ -121,3 +124,14 @@ aside
             background-color: $BLC
         .total
             color: $BLC
+
+.districtInfo
+    > h2
+        font-size: 1em
+        margin: 40px 0 10px
+        text-overflow: ellipsis
+        overflow: hidden
+        white-space: nowrap
+
+    .bar
+        height: 0.6 * $barHeight
