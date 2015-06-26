@@ -3,6 +3,15 @@ let React = require('react')
 let d = require('jsnox')(React)
 let topojson = require('topojson')
 
+// Polyfill for the ES6 method. In theory, shouldn't need this with babel,
+// but see https://github.com/babel/babel/issues/892
+let polyfillFind = typeof Array.prototype.find !== 'function'
+if (polyfillFind) Array.prototype.find = function(cb) {
+    for (var i=0, l=this.length; i<l; i++) {
+        if (cb(this[i])) return this[i]
+    }
+}
+
 const WIDTH = Math.max(900, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
 const PARTIES = 'CPC,NDP,LPC,BLC,GRN'.split(',')
@@ -51,15 +60,18 @@ let ElectionMap = React.createClass({
         paths
             .attr('vector-effect', 'non-scaling-stroke')
             .attr('d', this.pathProjection)
-            .attr('class', d => `district ${d.properties.winner.name}`)
+            .attr('class', d => {
+                let isSelected = (d.properties.districtId === this.state.selectedDistrictId)
+                let selectedClass = isSelected ? 'selected' : ''
+                return `district ${d.properties.winner.name} ${selectedClass}`
+            })
             .on('click', function(d) {
-                // FIXME: toggle selected district (allow deselection)
                 let selectedId = component.selectDistrict(d.properties)
                 let deselect = (selectedId === null)
                 d3.selectAll('.district').classed('selected', false)
                 d3.select(this).classed('selected', !deselect)
             })
-                .append('title').text(d => d.properties.districtName)
+            .append('title').text(d => d.properties.districtName)
     },
 
     selectDistrict(districtData) {
@@ -115,6 +127,9 @@ let BarChart = React.createClass({
 
 let DistrictInfo = React.createClass({
     displayName: 'DistrictInfo',
+    propTypes: {
+        district: React.PropTypes.object.isRequired
+    },
 
     render: function() {
         let name = this.props.district.districtName.replace(/--/g, '—')
@@ -174,8 +189,9 @@ let App = React.createClass({
         return {
             seatTotals: null,
             districts: null,
-            selectedDistrict: null,
-            originalDistricts: null
+            selectedDistrictId: null,
+            originalDistricts: null,
+            splitObj: null
         }
     },
 
@@ -217,19 +233,23 @@ let App = React.createClass({
     },
 
     render() {
+        let districts = this.state.districts || []
+        let selectedId = this.state.selectedDistrictId
+        let selected = (districts || []).find(d => d.properties.districtId === selectedId)
+
         return d('div', [
             d('aside', [
                 d('h1', '2011 Vote Splitter'),
                 d(BarChart, { dataMap: this.state.seatTotals, barMax: SEAT_COUNT }),
                 d('h2', 'if...'),
                 d(SplitterForm, {
-                    changeCallback: (split) => this.computeVotes(split, this.state.districts)
+                    changeCallback: (split) => this.computeVotes(split, districts)
                 }),
-                this.state.selectedDistrict && d(DistrictInfo, { district: this.state.selectedDistrict })
+                selectedId && d(DistrictInfo, { district: selected.properties })
             ]),
             d(ElectionMap, {
-                districts: this.state.districts,
-                onDistrictSelected: data => this.setState({ selectedDistrict: data })
+                districts: districts,
+                onDistrictSelected: data => this.setState({ selectedDistrictId: data.districtId })
             })
         ])
     }
