@@ -2,15 +2,8 @@ let d3 = require('d3')
 let React = require('react')
 let d = require('jsnox')(React)
 let topojson = require('topojson')
+require('array.prototype.find')     // polyfill
 
-// Polyfill for the ES6 method. In theory, shouldn't need this with babel,
-// but see https://github.com/babel/babel/issues/892
-let polyfillFind = typeof Array.prototype.find !== 'function'
-if (polyfillFind) Array.prototype.find = function(cb) {
-    for (var i=0, l=this.length; i<l; i++) {
-        if (cb(this[i])) return this[i]
-    }
-}
 
 const WIDTH = Math.max(900, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
