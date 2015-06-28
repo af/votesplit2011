@@ -1,3 +1,5 @@
+'use strict'
+
 let d3 = require('d3')
 let React = require('react')
 let d = require('jsnox')(React)
@@ -141,6 +143,7 @@ let DistrictInfo = React.createClass({
 let SplitterForm = React.createClass({
     displayName: 'SplitterForm',
     propTypes: {
+        splitObj: React.PropTypes.object,
         changeCallback: React.PropTypes.func.isRequired
     },
 
@@ -155,20 +158,24 @@ let SplitterForm = React.createClass({
 
     render() {
         let arrayToOptions = n => d('option', { key: n }, n)
-        let selectProps = { onChange: this.handleChange }
+        let onChange = this.handleChange
         let percentChoices = [0, 5, 10, 20, 50, 100]
+        let split = this.props.splitObj || {}
 
         return d('form.splitForm', [
             d('label.percent', [
-                d('select@percent', selectProps, percentChoices.map(arrayToOptions)),
+                d('select@percent',
+                    { onChange, value: split.percent },
+                    percentChoices.map(arrayToOptions)
+                 ),
                 '% of',
             ]),
             d('label.from', [
-                d('select@from', selectProps, PARTIES.map(arrayToOptions)),
+                d('select@from', { onChange, value: split.from }, PARTIES.map(arrayToOptions)),
                 'voters went',
             ]),
             d('label.to', [
-                d('select@to', selectProps, PARTIES.map(arrayToOptions)),
+                d('select@to', { onChange, value: split.to }, PARTIES.map(arrayToOptions)),
                 'instead'
             ])
         ])
@@ -176,6 +183,7 @@ let SplitterForm = React.createClass({
 })
 
 
+// Top level "controller-view" for the app
 let App = React.createClass({
     displayName: 'App',
     getInitialState() {
@@ -188,13 +196,28 @@ let App = React.createClass({
         }
     },
 
+    // Return a split object based on the hash querystring
+    getSplitFromQuery(query) {
+        let match = query.match(/split=(\w{3})-(\d{1,3})-(\w{3})/)
+        if (!match) return null
+
+        // For the "fullMatch" throwaway variable:
+        // jshint unused:false
+        let [fullMatch, from, percent, to] = match
+        percent = Math.min(Math.max(+percent, 0), 100)    // 0 < percent < 100
+        console.log({ from, percent, to })
+        return { from, percent, to }
+    },
+
     componentDidMount() {
+        let initialSplit = this.getSplitFromQuery(location.hash)
+
         d3.json('districts.topojson', (error, canada) => {
             if (error) return console.error(error)
 
             let districts = topojson.feature(canada, canada.objects.gfed000b11a_e).features
-            this.setState({ originalDistricts: districts })
-            this.computeVotes()
+            this.setState({ originalDistricts: districts, splitObj: initialSplit })
+            this.computeVotes(initialSplit)
         })
     },
 
@@ -236,6 +259,7 @@ let App = React.createClass({
                 d(BarChart, { dataMap: this.state.seatTotals, barMax: SEAT_COUNT }),
                 d('h2', 'if...'),
                 d(SplitterForm, {
+                    splitObj: this.state.splitObj,
                     changeCallback: (split) => this.computeVotes(split, districts)
                 }),
                 selectedId && d(DistrictInfo, { district: selected.properties })
