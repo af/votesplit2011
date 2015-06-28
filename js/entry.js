@@ -143,12 +143,16 @@ let DistrictInfo = React.createClass({
 let SplitterForm = React.createClass({
     displayName: 'SplitterForm',
     propTypes: {
-        splitObj: React.PropTypes.object,
+        splitObj: React.PropTypes.shape({
+            from: React.PropTypes.oneOf(PARTIES).isRequired,
+            to: React.PropTypes.oneOf(PARTIES).isRequired,
+            percent: React.PropTypes.number.isRequired
+        }),
         changeCallback: React.PropTypes.func.isRequired
     },
 
     handleChange() {
-        let split = {
+        const split = {
             from: this.refs.from.getDOMNode().value,
             to: this.refs.to.getDOMNode().value,
             percent: +this.refs.percent.getDOMNode().value
@@ -159,15 +163,15 @@ let SplitterForm = React.createClass({
     render() {
         let arrayToOptions = n => d('option', { key: n }, n)
         let onChange = this.handleChange
-        let percentChoices = [0, 5, 10, 20, 50, 100]
-        let split = this.props.splitObj || {}
+        const percentChoices = [0, 5, 10, 20, 50, 100]
+        const split = this.props.splitObj || {}
 
         return d('form.splitForm', [
             d('label.percent', [
                 d('select@percent',
                     { onChange, value: split.percent },
                     percentChoices.map(arrayToOptions)
-                 ),
+                ),
                 '% of',
             ]),
             d('label.from', [
@@ -205,12 +209,11 @@ let App = React.createClass({
         // jshint unused:false
         let [fullMatch, from, percent, to] = match
         percent = Math.min(Math.max(+percent, 0), 100)    // 0 < percent < 100
-        console.log({ from, percent, to })
         return { from, percent, to }
     },
 
     componentDidMount() {
-        let initialSplit = this.getSplitFromQuery(location.hash)
+        const initialSplit = this.getSplitFromQuery(location.hash)
 
         d3.json('districts.topojson', (error, canada) => {
             if (error) return console.error(error)
@@ -224,7 +227,7 @@ let App = React.createClass({
     computeVotes(splitObj, districts) {
         // Clone the districts arrays so we don't overwrite the original data:
         let seatTotals = {}
-        let actualVotes = this.state.originalDistricts.map(d => shallowClone(d.properties))
+        const actualVotes = this.state.originalDistricts.map(d => shallowClone(d.properties))
         districts = districts || this.state.originalDistricts.map(d => shallowClone(d))
 
         districts = districts.map((d, idx) => {
@@ -245,18 +248,18 @@ let App = React.createClass({
             return d
         })
 
-        this.setState({ seatTotals, districts })
+        this.setState({ splitObj, seatTotals, districts })
     },
 
     render() {
-        let districts = this.state.districts || []
-        let selectedId = this.state.selectedDistrictId
-        let selected = (districts || []).find(d => d.properties.districtId === selectedId)
+        const districts = this.state.districts || []
+        const selectedId = this.state.selectedDistrictId
+        const selected = (districts || []).find(d => d.properties.districtId === selectedId)
 
         return d('div', [
             d('aside', [
                 d('h1', '2011 Vote Splitter'),
-                d(BarChart, { dataMap: this.state.seatTotals, barMax: SEAT_COUNT }),
+                this.state.seatTotals && d(BarChart, { dataMap: this.state.seatTotals, barMax: SEAT_COUNT }),
                 d('h2', 'if...'),
                 d(SplitterForm, {
                     splitObj: this.state.splitObj,
