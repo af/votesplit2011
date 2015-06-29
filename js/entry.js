@@ -251,6 +251,11 @@ let App = React.createClass({
         this.setState({ splitObj, seatTotals, districts })
     },
 
+    onSplitChange(splitObj) {
+        this.computeVotes(splitObj, this.state.districts)
+        location.hash = `split=${splitObj.from}-${splitObj.percent}-${splitObj.to}`
+    },
+
     render() {
         const districts = this.state.districts || []
         const selectedId = this.state.selectedDistrictId
@@ -263,7 +268,7 @@ let App = React.createClass({
                 d('h2', 'if...'),
                 d(SplitterForm, {
                     splitObj: this.state.splitObj,
-                    changeCallback: (split) => this.computeVotes(split, districts)
+                    changeCallback: this.onSplitChange
                 }),
                 selectedId && d(DistrictInfo, { district: selected.properties })
             ]),
