@@ -1,6 +1,10 @@
-# 2011 Canadian Election map
+# 2011 Canadian Election Vote Splitting
 
-Very much a work in progress.
+How did so-called "vote splitting" affect the 2011 Canadian federal election?
+This visualization aims to help you answer that question by interactively playing
+with different hypothetical changes in voter behaviour.
+
+This is still a work in progress. If you have any feedback or ideas, let me know!
 
 
 ## Generating Election results CSV
