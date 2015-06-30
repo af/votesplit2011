@@ -274,7 +274,9 @@ let App = React.createClass({
             ]),
             d(ElectionMap, {
                 districts: districts,
-                onDistrictSelected: data => this.setState({ selectedDistrictId: data.districtId })
+                onDistrictSelected: data => {
+                    return this.setState({ selectedDistrictId: data ? data.districtId : null })
+                }
             })
         ])
     }
