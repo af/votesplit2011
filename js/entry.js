@@ -9,7 +9,7 @@ require('array.prototype.find')     // polyfill
 
 const WIDTH = Math.max(900, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
-const PARTIES = 'CPC,NDP,LPC,BLC,GRN'.split(',')
+const PARTIES = 'CPC,NDP,LPC,BQ,GPC'.split(',')
 const SEAT_COUNT = 308
 let shallowClone = o => {
     let newObj = {}

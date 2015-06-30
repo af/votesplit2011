@@ -12,8 +12,8 @@ var PARTIES = {     // The parties whose data we're interested in
     'Conservative':             'CPC',
     'NDP-New Democratic Party': 'NDP',
     'Liberal':                  'LPC',
-    'Green Party':              'GRN',
-    'Bloc Québécois':           'BLC'
+    'Green Party':              'GPC',
+    'Bloc Québécois':           'BQ'
 };
 
 var log = console.error.bind(console)   // utility for logging to stderr
