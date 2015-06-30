@@ -21,10 +21,10 @@ let shallowClone = o => {
 let ElectionMap = React.createClass({
     displayName: 'ElectionMap',
     propTypes: {
-        districts: React.PropTypes.arrayOf(React.PropTypes.object),
-        onDistrictSelected: React.PropTypes.func
+        districts: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+        selectedDistrictId: React.PropTypes.number,
+        onDistrictSelected: React.PropTypes.func.isRequired
     },
-    getInitialState() { return { selectedDistrictId: null } },
 
     componentDidMount() {
         let svg = d3.select(this.getDOMNode())
@@ -36,6 +36,7 @@ let ElectionMap = React.createClass({
             let evt = d3.event
             this.vizRoot.attr('transform', `translate(${evt.translate})scale(${evt.scale})`)
         }))
+        if (this.props.districts) this.drawDistricts(this.props.districts)
     },
 
     // Don't ever re-render the svg element, but redraw the districts if the
@@ -56,7 +57,7 @@ let ElectionMap = React.createClass({
             .attr('vector-effect', 'non-scaling-stroke')
             .attr('d', this.pathProjection)
             .attr('class', d => {
-                let isSelected = (d.properties.districtId === this.state.selectedDistrictId)
+                let isSelected = (d.properties.districtId === this.props.selectedDistrictId)
                 let selectedClass = isSelected ? 'selected' : ''
                 return `district ${d.properties.winner.name} ${selectedClass}`
             })
@@ -71,14 +72,9 @@ let ElectionMap = React.createClass({
 
     selectDistrict(districtData) {
         let id = districtData.districtId
-        let shouldDeselect = (this.state.selectedDistrictId === id)
-        if (this.props.onDistrictSelected) {
-            this.props.onDistrictSelected(shouldDeselect ? null : districtData)
-        }
-        this.setState({
-            selectedDistrictId: shouldDeselect ? null : id
-        })
-        return this.state.selectedDistrictId
+        let shouldDeselect = (this.props.selectedDistrictId === id)
+        this.props.onDistrictSelected(shouldDeselect ? null : districtData)
+        return this.props.selectedDistrictId
     },
 
     render() {
@@ -192,6 +188,7 @@ let App = React.createClass({
     displayName: 'App',
     getInitialState() {
         return {
+            isLoaded: false,
             seatTotals: null,
             districts: null,
             selectedDistrictId: null,
@@ -200,27 +197,31 @@ let App = React.createClass({
         }
     },
 
-    // Return a split object based on the hash querystring
-    getSplitFromQuery(query) {
-        let match = query.match(/split=(\w{3})-(\d{1,3})-(\w{3})/)
-        if (!match) return null
+    // Set initial app state based on location.hash
+    getStateFromHash(hash) {
+        let match = hash.match(/split=(\w{3})-(\d{1,3})-(\w{3})(?:&select=(\d+))/)
+        if (!match) return {}
 
         // For the "fullMatch" throwaway variable:
         // jshint unused:false
-        let [fullMatch, from, percent, to] = match
+        let [fullMatch, from, percent, to, selectedDistrict] = match
         percent = Math.min(Math.max(+percent, 0), 100)    // 0 < percent < 100
-        return { from, percent, to }
+        return {
+            splitObj: { from, percent, to },
+            selectedDistrictId: +selectedDistrict || null
+        }
     },
 
     componentDidMount() {
-        const initialSplit = this.getSplitFromQuery(location.hash)
+        let initialState = this.getStateFromHash(location.hash)
 
         d3.json('districts.topojson', (error, canada) => {
             if (error) return console.error(error)
 
             let districts = topojson.feature(canada, canada.objects.gfed000b11a_e).features
-            this.setState({ originalDistricts: districts, splitObj: initialSplit })
-            this.computeVotes(initialSplit)
+            initialState.originalDistricts = districts
+            this.setState(initialState)
+            this.computeVotes(this.state.splitObj)
         })
     },
 
@@ -248,15 +249,23 @@ let App = React.createClass({
             return d
         })
 
-        this.setState({ splitObj, seatTotals, districts })
+        this.setState({ splitObj, seatTotals, districts, isLoaded: true })
     },
 
     onSplitChange(splitObj) {
         this.computeVotes(splitObj, this.state.districts)
-        location.hash = `split=${splitObj.from}-${splitObj.percent}-${splitObj.to}`
+        this.updateHash({ splitObj, selectedDistrictId: this.state.selectedDistrictId })
+    },
+
+    updateHash({ splitObj, selectedDistrictId }) {
+        let hash = `split=${splitObj.from}-${splitObj.percent}-${splitObj.to}`
+        if (selectedDistrictId) hash += `&select=${selectedDistrictId}`
+        location.hash = hash
     },
 
     render() {
+        if (!this.state.isLoaded) return d('div.loading', 'Loading...')
+
         const districts = this.state.districts || []
         const selectedId = this.state.selectedDistrictId
         const selected = (districts || []).find(d => d.properties.districtId === selectedId)
@@ -270,12 +279,14 @@ let App = React.createClass({
                     splitObj: this.state.splitObj,
                     changeCallback: this.onSplitChange
                 }),
-                selectedId && d(DistrictInfo, { district: selected.properties })
+                selected && d(DistrictInfo, { district: selected.properties })
             ]),
             d(ElectionMap, {
                 districts: districts,
+                selectedDistrictId: this.state.selectedDistrictId,
                 onDistrictSelected: data => {
-                    return this.setState({ selectedDistrictId: data ? data.districtId : null })
+                    this.setState({ selectedDistrictId: data ? data.districtId : null })
+                    this.updateHash(this.state)
                 }
             })
         ])
