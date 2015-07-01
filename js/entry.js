@@ -199,7 +199,7 @@ let App = React.createClass({
 
     // Set initial app state based on location.hash
     getStateFromHash(hash) {
-        let match = hash.match(/split=(\w{3})-(\d{1,3})-(\w{3})(?:&select=(\d+))/)
+        let match = hash.match(/split=(\w{2,3})-(\d{1,3})-(\w{2,3})(?:&select=(\d+))/)
         if (!match) return {}
 
         // For the "fullMatch" throwaway variable:
