@@ -199,7 +199,7 @@ let App = React.createClass({
 
     // Set initial app state based on location.hash
     getStateFromHash(hash) {
-        let match = hash.match(/split=(\w{2,3})-(\d{1,3})-(\w{2,3})(?:&select=(\d+))/)
+        let match = hash.match(/split=(\w{2,3})-(\d{1,3})-(\w{2,3})(?:&select=(\d+))?/)
         if (!match) return {}
 
         // For the "fullMatch" throwaway variable:
@@ -258,6 +258,7 @@ let App = React.createClass({
     },
 
     updateHash({ splitObj, selectedDistrictId }) {
+        if (!splitObj) return
         let hash = `split=${splitObj.from}-${splitObj.percent}-${splitObj.to}`
         if (selectedDistrictId) hash += `&select=${selectedDistrictId}`
         location.hash = hash
@@ -285,8 +286,10 @@ let App = React.createClass({
                 districts: districts,
                 selectedDistrictId: this.state.selectedDistrictId,
                 onDistrictSelected: data => {
-                    this.setState({ selectedDistrictId: data ? data.districtId : null })
-                    this.updateHash(this.state)
+                    let id = data ? data.districtId : null
+                    this.setState({ selectedDistrictId: id }, () => {
+                        this.updateHash(this.state)
+                    })
                 }
             })
         ])
