@@ -107,7 +107,7 @@ let BarChart = React.createClass({
                 if (!value && this.props.onZeroValue) return this.props.onZeroValue()
                 return d(`div.barContainer.${partyKey}`, [
                     d('img.logo', { src: `/logos/${partyKey}.svg`, alt: partyKey }),
-                    d('span.total', '' + value),        // FIXME: jsnox number treatment
+                    d('span.total', value),
                     d('div.bar', { style: { width: barScale + '%' }})
                 ])
             })
