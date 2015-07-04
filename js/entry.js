@@ -272,14 +272,18 @@ let App = React.createClass({
 
         return d('div', [
             d('aside', [
-                d('h1', '2011 Vote Splitter'),
-                this.state.seatTotals && d(BarChart, { dataMap: this.state.seatTotals, barMax: SEAT_COUNT }),
-                d('h2', 'if...'),
-                d(SplitterForm, {
-                    splitObj: this.state.splitObj,
-                    changeCallback: this.onSplitChange
-                }),
-                selected && d(DistrictInfo, { district: selected.properties })
+                d('section.results', [
+                    d('h1', '2011 Vote Splitter'),
+                    this.state.seatTotals && d(BarChart, { dataMap: this.state.seatTotals, barMax: SEAT_COUNT }),
+                    d('h2', 'if...'),
+                    d(SplitterForm, {
+                        splitObj: this.state.splitObj,
+                        changeCallback: this.onSplitChange
+                    }),
+                ]),
+                selected && d('section.selected', [
+                    d(DistrictInfo, { district: selected.properties })
+                ])
             ]),
             d(ElectionMap, {
                 districts: districts,
