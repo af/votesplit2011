@@ -2,6 +2,7 @@ var path = require('path')
 var webpack = require('webpack')
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var stylusLoader = ExtractTextPlugin.extract('style-loader', 'css-loader!stylus-loader')
+var autoprefixer = require('autoprefixer-stylus')
 
 
 module.exports = {
@@ -23,5 +24,7 @@ module.exports = {
     plugins: [
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
         new ExtractTextPlugin('main.css')
-    ]
+    ],
+
+    stylus: { use: [autoprefixer()] }
 }
