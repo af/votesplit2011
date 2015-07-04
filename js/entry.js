@@ -56,6 +56,9 @@ let ElectionMap = React.createClass({
         paths
             .attr('vector-effect', 'non-scaling-stroke')
             .attr('d', this.pathProjection)
+            .attr('opacity', d => {
+                return d.properties[d.properties.winner.name]/d.properties.totalVotes
+            })
             .attr('class', d => {
                 let isSelected = (d.properties.districtId === this.props.selectedDistrictId)
                 let selectedClass = isSelected ? 'selected' : ''
