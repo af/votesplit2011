@@ -78,11 +78,7 @@ let ElectionMap = React.createClass({
     },
 
     render() {
-        return d('svg', {
-            width: WIDTH,
-            height: HEIGHT,
-            transform: `translate(0, ${HEIGHT - 150})`
-        })
+        return d('svg', { width: WIDTH, height: HEIGHT })
     }
 })
 
