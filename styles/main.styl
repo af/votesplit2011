@@ -142,3 +142,13 @@ aside
 
     .bar
         height: 0.6 * $barHeight
+
+// Styles for the TimeoutTransitionGroup on the sidebar:
+.selected
+    transition: transform 0.2s
+
+.sidebar-enter, .sidebar-leave.sidebar-leave-active
+    transform: translateX(-260px)
+
+.sidebar-enter.sidebar-enter-active, .sidebar-leave
+    transform: translateX(0)

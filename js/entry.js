@@ -4,6 +4,7 @@ let d3 = require('d3')
 let React = require('react')
 let d = require('jsnox')(React)
 let topojson = require('topojson')
+let TimeoutTransitionGroup = require('timeout-transition-group')
 require('array.prototype.find')     // polyfill
 
 
@@ -281,8 +282,15 @@ let App = React.createClass({
                         changeCallback: this.onSplitChange
                     }),
                 ]),
-                selected && d('section.selected', [
-                    d(DistrictInfo, { district: selected.properties })
+                d(TimeoutTransitionGroup, {
+                    enterTimeout: 400,
+                    leaveTimeout: 400,
+                    transitionName: 'sidebar',
+                    component: 'div'
+                }, [
+                    selected && d('section.selected', [
+                        d(DistrictInfo, { district: selected.properties })
+                    ])
                 ])
             ]),
             d(ElectionMap, {
