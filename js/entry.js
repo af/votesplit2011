@@ -265,7 +265,7 @@ let App = React.createClass({
     },
 
     render() {
-        if (!this.state.isLoaded) return d('div.loading', 'Loading...')
+        if (!this.state.isLoaded) return d('div.loading', 'Loading election data...')
 
         const districts = this.state.districts || []
         const selectedId = this.state.selectedDistrictId

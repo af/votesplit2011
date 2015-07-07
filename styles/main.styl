@@ -6,6 +6,12 @@ $BQ = #00ABF1
 
 $barHeight = 25px
 
+@keyframes pulseOpacity
+    0%
+        opacity: 1
+    50%
+        opacity: 0.2
+
 *
     box-sizing: border-box
 
@@ -14,6 +20,13 @@ body
     font-family: 'Source Code Pro'        // TODO: add font files
     -webkit-font-smoothing: antialiased
     margin: 0
+
+.loading
+    height: 100vh
+    width: 100vw
+    text-align: center
+    padding-top: 49vh
+    animation: pulseOpacity 2s infinite
 
 aside
     position: absolute
