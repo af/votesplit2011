@@ -175,7 +175,7 @@ let SplitterForm = React.createClass({
                 'voters went',
             ]),
             d('label.to', [
-                d('select@to', { onChange, value: split.to }, PARTIES.map(arrayToOptions)),
+                d('select@to', { onChange, value: split.to || PARTIES[1] }, PARTIES.map(arrayToOptions)),
                 'instead'
             ])
         ])
