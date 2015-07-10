@@ -8,7 +8,7 @@ let TimeoutTransitionGroup = require('timeout-transition-group')
 require('array.prototype.find')     // polyfill
 
 
-const WIDTH = Math.max(900, window.innerWidth)
+const WIDTH = Math.min(1440, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
 const PARTIES = 'CPC,NDP,LPC,BQ,GPC'.split(',')
 const SEAT_COUNT = 308
@@ -30,7 +30,9 @@ let ElectionMap = React.createClass({
     componentDidMount() {
         let svg = d3.select(this.getDOMNode())
         this.vizRoot = svg.append('g').attr('class', 'container')
-        this.projection = d3.geo.albers().translate([WIDTH / 2, HEIGHT])
+        this.projection = d3.geo.albers()
+                                .scale(WIDTH)
+                                .translate([WIDTH / 2, HEIGHT])
         this.pathProjection = d3.geo.path().projection(this.projection)
 
         svg.call(d3.behavior.zoom().scaleExtent([1, 20]).on('zoom', () => {
