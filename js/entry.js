@@ -7,6 +7,7 @@ let topojson = require('topojson')
 let ElectionMap = require('./map')
 let TimeoutTransitionGroup = require('timeout-transition-group')
 require('array.prototype.find')     // polyfill
+require('./analytics')()
 
 
 const PARTIES = 'CPC,NDP,LPC,BQ,GPC'.split(',')
