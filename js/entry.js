@@ -146,6 +146,10 @@ let App = React.createClass({
 
     componentDidMount() {
         let initialState = this.getStateFromHash(location.hash)
+        window.onhashchange = () => {
+            let { splitObj } = this.getStateFromHash(location.hash)
+            this.computeVotes(splitObj)
+        }
 
         d3.json('districts.topojson', (error, canada) => {
             if (error) return console.error(error)
@@ -217,7 +221,8 @@ let App = React.createClass({
                     d('div.examples', [
                         d('h3', 'Examples'),
                         d('a[href=#split=GPC-100-NDP]', 'If all Green voters went NDP'),
-                        d('a[href=#split=NDP-50-LPC]', 'If half of NDP voters went Liberal')
+                        d('a[href=#split=NDP-50-LPC]', 'If half of NDP voters went Liberal'),
+                        d('a[href=#]', 'Rest to actual election results')
                     ]),
                     this.state.seatTotals && d(BarChart, { dataMap: this.state.seatTotals, barMax: SEAT_COUNT }),
                     d('h2', 'if...'),
