@@ -207,6 +207,18 @@ let App = React.createClass({
             d('aside', [
                 d('section.results', [
                     d('h1', '2011 Vote Splitter'),
+                    d('div.preamble',
+                        `A common complaint about the Canadian electoral
+                         system is that the non-Conservative parties split
+                         the "left-leaning" vote amongst themselves, ensuring
+                         CPC success in many ridings. Use the form below to
+                         redistribute votes from the 2011 election and see how
+                         it would have affected the results.`),
+                    d('div.examples', [
+                        d('h3', 'Examples'),
+                        d('a[href=#split=GPC-100-NDP]', 'If all Green voters went NDP'),
+                        d('a[href=#split=NDP-50-LPC]', 'If half of NDP voters went Liberal')
+                    ]),
                     this.state.seatTotals && d(BarChart, { dataMap: this.state.seatTotals, barMax: SEAT_COUNT }),
                     d('h2', 'if...'),
                     d(SplitterForm, {
