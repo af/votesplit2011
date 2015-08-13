@@ -28,7 +28,7 @@ module.exports = {
         }),
         isProduction && new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
-        new ExtractTextPlugin('main.css')
+        new ExtractTextPlugin('styles.css')
     ]).filter(function(x) { return !!x }),
 
     stylus: { use: [autoprefixer()] }
