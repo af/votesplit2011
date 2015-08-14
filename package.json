@@ -4,7 +4,7 @@
   "description": "Very much a work in progress.",
   "main": "index.js",
   "scripts": {
-    "watch": "webpack-dev-server --content-base assets/",
+    "start": "webpack-dev-server",
     "build": "webpack"
   },
   "author": "Aaron Franks (http://aaronfranks.com/)",

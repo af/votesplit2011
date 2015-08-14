@@ -38,7 +38,7 @@ let BarChart = React.createClass({
 
                 if (!value && this.props.onZeroValue) return this.props.onZeroValue()
                 return d(`div.barContainer.${partyKey}`, [
-                    d('img.logo', { src: `/logos/${partyKey}.svg`, alt: partyKey }),
+                    d('img.logo', { src: `/assets/logos/${partyKey}.svg`, alt: partyKey }),
                     d('span.total', value),
                     d('div.bar', { style: { width: barScale + '%' }})
                 ])
@@ -151,7 +151,7 @@ let App = React.createClass({
             this.computeVotes(splitObj)
         }
 
-        d3.json('districts.topojson', (error, canada) => {
+        d3.json('./assets/districts.topojson', (error, canada) => {
             if (error) return console.error(error)
 
             let districts = topojson.feature(canada, canada.objects.gfed000b11a_e).features
