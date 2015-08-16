@@ -26,12 +26,19 @@ let DistrictInfo = React.createClass({
     },
 
     render: function() {
-        let name = this.props.district.districtName.replace(/--/g, '—')
+        const { district } = this.props
+        const name = district.districtName.replace(/--/g, '—')
+
+        let other = district.totalVotes
+        for (let p of PARTIES) other -= (district[p] || 0)
+        district.OTHER = other
+
         return d('div.districtInfo', [
             d('h2', name),
             d(BarChart, {
-                dataMap: this.props.district,
+                dataMap: district,
                 barMax: 60000,
+                showOther: true,
                 onZeroValue: () => null     // Don't render bars where there are no votes
             })
         ])
