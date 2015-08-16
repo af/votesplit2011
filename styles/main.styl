@@ -1,8 +1,10 @@
-$CPC = #0B4695
-$NDP = #F48416
-$LPC = #ED2F23
-$GPC = #71C50F
-$BQ = #00ABF1
+$partyColours = {
+    CPC: #0B4695,
+    NDP: #F48416,
+    LPC: #ED2F23,
+    GPC: #71C50F,
+    BQ: #00ABF1
+}
 
 $barHeight = 25px
 
@@ -93,16 +95,9 @@ aside
         opacity: 0.9
         stroke-width: 4px
 
-    &.CPC
-        fill: $CPC
-    &.NDP
-        fill: $NDP
-    &.LPC
-        fill: $LPC
-    &.GPC
-        fill: $GPC
-    &.BQ
-        fill: $BQ
+    for $key, $colour in $partyColours
+        &.{$key}
+            fill: $colour
 
 .barContainer
     position: relative
@@ -134,31 +129,12 @@ aside
         &:before
             content: ''
 
-    &.CPC
-        .bar
-            background-color: $CPC
-        .total
-            color: $CPC
-    &.NDP
-        .bar
-            background-color: $NDP
-        .total
-            color: $NDP
-    &.LPC
-        .bar
-            background-color: $LPC
-        .total
-            color: $LPC
-    &.GPC
-        .bar
-            background-color: $GPC
-        .total
-            color: $GPC
-    &.BQ
-        .bar
-            background-color: $BQ
-        .total
-            color: $BQ
+    for $key, $colour in $partyColours
+        &.{$key}
+            .bar
+                background-color: $colour
+            .total
+                color: $colour
 
 .districtInfo
     > h2
