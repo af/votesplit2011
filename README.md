@@ -30,7 +30,7 @@ https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-
 
 You'll want to choose "Federal Electoral Districts" and "Cartographic Boundary File"
 
-Then run the following (you may need to run `npm install topojson` first):
+Then run the following (you will need to `npm install topojson` first):
 
 ```
 topojson -p +districtId,districtName,+totalVotes,+CPC,+LPC,+NDP,+GPC,+BQ \
@@ -41,14 +41,14 @@ topojson -p +districtId,districtName,+totalVotes,+CPC,+LPC,+NDP,+GPC,+BQ \
 ```
 
 The [topojson CLI reference](https://github.com/mbostock/topojson/wiki/Command-Line-Reference)
-has more tips that can likely improve the output further.
+has more tips that can likely reduce the filesize further.
 
 
 ## Running locally
 
 ```
 npm install
-npm run watch
+npm start
 ```
 
 And then visit `localhost:8080` in your browser.
