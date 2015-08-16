@@ -35,10 +35,12 @@ let BarChart = React.createClass({
             PARTIES.map(partyKey => {
                 let value = results[partyKey] || 0
                 let barScale = 100*value/this.props.barMax
+                let logo = require(`../assets/logos/${partyKey}.svg`)
 
                 if (!value && this.props.onZeroValue) return this.props.onZeroValue()
                 return d(`div.barContainer.${partyKey}`, [
-                    d('img.logo', { src: `/assets/logos/${partyKey}.svg`, alt: partyKey }),
+                    // FIXME: require svgs with webpack here:
+                    d('img.logo', { src: logo, alt: partyKey }),
                     d('span.total', value),
                     d('div.bar', { style: { width: barScale + '%' }})
                 ])

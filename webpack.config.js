@@ -20,7 +20,8 @@ module.exports = {
     module: {
         loaders: [
             { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"},
-            { test: /\.styl$/, loader: stylusLoader }
+            { test: /\.styl$/, loader: stylusLoader },
+            { test: /\.svg$/, loader: "url" }
         ]
     },
     plugins: ([
