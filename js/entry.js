@@ -4,50 +4,19 @@ let d3 = require('d3')
 let React = require('react')
 let d = require('jsnox')(React)
 let topojson = require('topojson')
-let ElectionMap = require('./map')
 let TimeoutTransitionGroup = require('timeout-transition-group')
 require('array.prototype.find')     // polyfill
 require('./analytics')()
 
+const ElectionMap = require('./map')
+const BarChart = require('./barchart')
+const { PARTIES, SEAT_COUNT } = require('./constants')
 
-const PARTIES = 'CPC,NDP,LPC,BQ,GPC'.split(',')
-const SEAT_COUNT = 308
 let shallowClone = o => {
     let newObj = {}
     for (let x in o) newObj[x] = o[x]
     return newObj
 }
-
-
-let BarChart = React.createClass({
-    displayName: 'BarChart',
-    propTypes: {
-        dataMap: React.PropTypes.object.isRequired,
-        barMax: React.PropTypes.number.isRequired,
-        onZeroValue: React.PropTypes.func
-    },
-
-    render() {
-        let results = this.props.dataMap
-        if (!results) return d('div.barChart');
-
-        return d('div.barChart',
-            PARTIES.map(partyKey => {
-                let value = results[partyKey] || 0
-                let barScale = 100*value/this.props.barMax
-                let logo = require(`../assets/logos/${partyKey}.svg`)
-
-                if (!value && this.props.onZeroValue) return this.props.onZeroValue()
-                return d(`div.barContainer.${partyKey}`, [
-                    // FIXME: require svgs with webpack here:
-                    d('img.logo', { src: logo, alt: partyKey }),
-                    d('span.total', value),
-                    d('div.bar', { style: { width: barScale + '%' }})
-                ])
-            })
-        )
-    }
-})
 
 
 let DistrictInfo = React.createClass({
