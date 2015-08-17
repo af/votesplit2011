@@ -100,6 +100,7 @@ let App = React.createClass({
         return {
             isLoaded: false,
             seatTotals: null,
+            actualTotals: null,
             districts: null,
             selectedDistrictId: null,
             originalDistricts: null,
@@ -163,7 +164,9 @@ let App = React.createClass({
             return d
         })
 
-        this.setState({ splitObj, seatTotals, districts, isLoaded: true })
+        const saveActuals = (!this.state.actualTotals && (!splitObj || !splitObj.percent))
+        const actualTotals = saveActuals ? seatTotals : this.state.actualTotals
+        this.setState({ splitObj, seatTotals, actualTotals, districts, isLoaded: true })
     },
 
     onSplitChange(splitObj) {
@@ -202,7 +205,11 @@ let App = React.createClass({
                         d('a[href=#split=NDP-50-LPC]', 'If half of NDP voters went Liberal'),
                         d('a[href=#]', 'Reset to actual election results')
                     ]),
-                    this.state.seatTotals && d(BarChart, { dataMap: this.state.seatTotals, barMax: SEAT_COUNT }),
+                    this.state.seatTotals && d(BarChart, {
+                        dataMap: this.state.seatTotals,
+                        barMax: SEAT_COUNT,
+                        markers: this.state.actualTotals
+                    }),
                     d('h2', 'if...'),
                     d(SplitterForm, {
                         splitObj: this.state.splitObj,

@@ -129,11 +129,16 @@ aside
         color: black
         text-shadow: 1px 1px 0 white
 
-    .bar
-        height: $barHeight
-        background: #ddd
-        transition: width 1s
+    .barWrap
+        position: relative
         margin-left: 5px
+        height: $barHeight
+        width: 100%
+
+    .bar
+        background: #ddd
+        height: 100%
+        transition: width 1s
 
         &:before
             content: ''
@@ -145,6 +150,19 @@ aside
             .total
                 color: $colour
 
+    .marker
+        position: absolute
+        top: 0
+        height: 100%
+        padding-left: 10px
+        border-left: 1px dotted rgba(#000, 0.8)
+
+        // Alternate (experimental) arrow form (remove height/padding above):
+        // border-left: 5px solid transparent;
+        // border-top: 5px solid rgba(0,0,0,0.6);
+        // border-right: 5px solid transparent;
+        // margin-left: -5px;
+
 .districtInfo
     > h2
         font-size: 1em
@@ -153,7 +171,7 @@ aside
         overflow: hidden
         white-space: nowrap
 
-    .bar
+    .barWrap
         height: 0.6 * $barHeight
 
 // Styles for the TimeoutTransitionGroup on the sidebar:
