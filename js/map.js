@@ -49,7 +49,7 @@ module.exports = React.createClass({
             .attr('vector-effect', 'non-scaling-stroke')
             .attr('d', this.pathProjection)
             .attr('opacity', d => {
-                return d.properties[d.properties.winner.name]/d.properties.totalVotes
+                return 1.5 * d.properties[d.properties.winner.name]/d.properties.totalVotes
             })
             .attr('class', d => {
                 let isSelected = (d.properties.districtId === this.props.selectedDistrictId)
