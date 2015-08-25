@@ -6,6 +6,7 @@ let d = require('jsnox')(React)
 
 const WIDTH = Math.min(1440, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
+const IS_PORTRAIT = HEIGHT > WIDTH
 
 
 module.exports = React.createClass({
@@ -21,7 +22,7 @@ module.exports = React.createClass({
         this.vizRoot = svg.append('g').attr('class', 'container')
         this.projection = d3.geo.albers()
                                 .scale(WIDTH)
-                                .translate([WIDTH / 2, HEIGHT])
+                                .translate([WIDTH / 2, Math.min(HEIGHT, WIDTH)])
         this.pathProjection = d3.geo.path().projection(this.projection)
 
         svg.call(d3.behavior.zoom().scaleExtent([1, 20]).on('zoom', () => {
@@ -73,6 +74,7 @@ module.exports = React.createClass({
     },
 
     render() {
-        return d('svg', { width: WIDTH, height: HEIGHT })
+        const height = IS_PORTRAIT ? Math.min(HEIGHT, WIDTH) : HEIGHT
+        return d('svg.mapRoot', { width: WIDTH, height: height })
     }
 })
