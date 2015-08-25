@@ -4,7 +4,7 @@ let d3 = require('d3')
 let React = require('react')
 let d = require('jsnox')(React)
 
-const WIDTH = Math.min(1440, window.innerWidth)
+const WIDTH = Math.max(300, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
 const IS_PORTRAIT = HEIGHT > WIDTH
 
