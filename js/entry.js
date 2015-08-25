@@ -195,7 +195,7 @@ let App = React.createClass({
                     d('div.preamble',
                         `A common complaint about the Canadian electoral
                          system is that the non-Conservative parties split
-                         the "left-leaning" vote amongst themselves, ensuring
+                         the progressive vote amongst themselves, ensuring
                          CPC success in many ridings. Use the form below to
                          redistribute votes from the 2011 election and see how
                          it would have affected the results.`),
