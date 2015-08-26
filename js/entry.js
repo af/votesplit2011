@@ -82,7 +82,7 @@ let SplitterForm = React.createClass({
             ]),
             d('label.from', [
                 d('select@from', { onChange, value: split.from }, PARTIES.map(arrayToOptions)),
-                'voters went',
+                'voters to',
             ]),
             d('label.to', [
                 d('select@to', { onChange, value: split.to || PARTIES[1] }, PARTIES.map(arrayToOptions)),
@@ -199,21 +199,26 @@ let App = React.createClass({
                          CPC success in many ridings. Use the form below to
                          redistribute votes from the 2011 election and see how
                          it would have affected the results.`),
+
+                    d('h3.formHeading', 'Adjust vote split'),
+                    d(SplitterForm, {
+                        splitObj: this.state.splitObj,
+                        changeCallback: this.onSplitChange
+                    }),
+
                     d('div.examples', [
-                        d('h3', 'Examples'),
-                        d('a[href=#split=GPC-100-NDP]', 'If all Green voters went NDP'),
-                        d('a[href=#split=NDP-50-LPC]', 'If half of NDP voters went Liberal'),
-                        d('a[href=#]', 'Reset to actual election results')
+                        d('h3', 'Examples: what if...'),
+                        d('a[href=#split=GPC-100-NDP]', 'All Green voters went NDP'),
+                        d('a[href=#split=NDP-50-LPC]', 'Half of NDP voters went Liberal'),
+                        d('a[href=#split=LPC-50-NDP]', 'Half of Liberal voters went NDP'),
+                        d('a[href=#]', '(reset to actual 2011 results)')
                     ]),
+
+                    d('h3.seatHeading', 'Seat Results'),
                     this.state.seatTotals && d(BarChart, {
                         dataMap: this.state.seatTotals,
                         barMax: SEAT_COUNT,
                         markers: this.state.actualTotals
-                    }),
-                    d('h2', 'if...'),
-                    d(SplitterForm, {
-                        splitObj: this.state.splitObj,
-                        changeCallback: this.onSplitChange
                     }),
                 ]),
                 d(TimeoutTransitionGroup, {
