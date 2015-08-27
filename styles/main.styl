@@ -82,8 +82,15 @@ section.selected
 
     .close
         position: absolute
-        right: $sidebarPadding
+        right: 0.5 * $sidebarPadding
         top: 0.5 * $sidebarPadding
+        border: none
+        background: none
+        cursor: pointer
+
+        &:before
+            content: 'x'
+            font-weight: bold
 
     h2
         margin: 0

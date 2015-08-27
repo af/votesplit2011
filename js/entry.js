@@ -228,7 +228,9 @@ let App = React.createClass({
                     component: 'div'
                 }, [
                     selected && d('section.selected', [
-                        d('button.close', { onClick: () => this.setState({ selectedDistrictId: null }) }, 'close'),
+                        d('button.close', {
+                            onClick: () => this.setState({ selectedDistrictId: null })
+                        }),
                         d(DistrictInfo, { district: selected.properties })
                     ])
                 ])
