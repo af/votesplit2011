@@ -73,6 +73,7 @@ let SplitterForm = React.createClass({
         const split = this.props.splitObj || {}
 
         return d('form.splitForm', [
+            d('h3', 'Redistribute votes'),
             d('label.percent', [
                 d('select@percent',
                     { onChange, value: split.percent },
@@ -87,7 +88,15 @@ let SplitterForm = React.createClass({
             d('label.to', [
                 d('select@to', { onChange, value: split.to || PARTIES[1] }, PARTIES.map(arrayToOptions)),
                 'instead'
-            ])
+            ]),
+
+            d('div.examples', [
+                d('h3', 'Examples: what if...'),
+                d('a[href=#split=GPC-100-NDP]', 'All Green voters went NDP'),
+                d('a[href=#split=NDP-50-LPC]', 'Half of NDP voters went Liberal'),
+                d('a[href=#split=LPC-50-NDP]', 'Half of Liberal voters went NDP'),
+                d('a[href=#]', '(reset to actual 2011 results)')
+            ]),
         ])
     }
 })
@@ -200,19 +209,10 @@ let App = React.createClass({
                          redistribute votes from the 2011 election and see how
                          it would have affected the results.`),
 
-                    d('h3.formHeading', 'Adjust vote split'),
                     d(SplitterForm, {
                         splitObj: this.state.splitObj,
                         changeCallback: this.onSplitChange
                     }),
-
-                    d('div.examples', [
-                        d('h3', 'Examples: what if...'),
-                        d('a[href=#split=GPC-100-NDP]', 'All Green voters went NDP'),
-                        d('a[href=#split=NDP-50-LPC]', 'Half of NDP voters went Liberal'),
-                        d('a[href=#split=LPC-50-NDP]', 'Half of Liberal voters went NDP'),
-                        d('a[href=#]', '(reset to actual 2011 results)')
-                    ]),
 
                     d('h3.seatHeading', 'Seat Results'),
                     this.state.seatTotals && d(BarChart, {
