@@ -6,6 +6,7 @@ let d = require('jsnox')(React)
 
 const WIDTH = Math.max(300, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
+const SIDEBAR_WIDTH = 300           // Duplicated from CSS unfortunately
 const IS_PORTRAIT = HEIGHT > WIDTH
 
 
@@ -21,7 +22,7 @@ module.exports = React.createClass({
         let svg = d3.select(this.getDOMNode())
         this.vizRoot = svg.append('g').attr('class', 'container')
         this.projection = d3.geo.albers()
-                                .scale(WIDTH)
+                                .scale(IS_PORTRAIT ? WIDTH : WIDTH - SIDEBAR_WIDTH)
                                 .translate([WIDTH / 2, Math.min(HEIGHT, WIDTH)])
         this.pathProjection = d3.geo.path().projection(this.projection)
 

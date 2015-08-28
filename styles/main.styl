@@ -9,6 +9,7 @@ $partyColours = {
 
 $nonPartisanPurple = #741C8A
 $barHeight = 25px
+$sidebarWidth = 300px
 $sidebarPadding = 20px
 
 @keyframes pulseOpacity
@@ -44,7 +45,7 @@ aside
     position: absolute
     left: 0
     top: 0
-    width: 300px
+    width: $sidebarWidth
     font-size: 12px
 
     h3
@@ -239,3 +240,7 @@ section.selected
         width: 100vw
         padding: $sidebarPadding
         margin-bottom: 0
+
+@media screen and (min-width: 700px)
+    .mapRoot
+        padding-left: 0.3 * $sidebarWidth      // Map centering hack
