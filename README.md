@@ -4,7 +4,7 @@ How did so-called "vote splitting" affect the 2011 Canadian federal election?
 This visualization aims to help you answer that question by interactively playing
 with different hypothetical changes in voter behaviour.
 
-This is still a work in progress. If you have any feedback or ideas, let me know!
+[Check out the online version](http://af.github.io/votesplit2011)
 
 
 ## Generating Election results CSV
@@ -52,6 +52,9 @@ npm start
 ```
 
 And then visit `localhost:8080` in your browser.
+
+Alternately, `npm build` will create the js/css files for you if you want to deploy
+to a static hosting site (like Github pages).
 
 
 ## Misc links and alternate data sources
