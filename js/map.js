@@ -21,7 +21,7 @@ module.exports = React.createClass({
     },
 
     componentDidMount() {
-        this.svg = d3.select(this.getDOMNode())
+        this.svg = d3.select(this.refs.svg.getDOMNode())
         this.vizRoot = this.svg.append('g').attr('class', 'container')
         this.projection = d3.geo.albers()
                                 .scale(IS_PORTRAIT ? WIDTH : WIDTH - SIDEBAR_WIDTH)
@@ -31,7 +31,6 @@ module.exports = React.createClass({
         this.zoomer = d3.behavior.zoom()
                        .translate([0,0])
                        .size([WIDTH, HEIGHT])
-                       .center([WIDTH/2, HEIGHT/2])
                        .scale(1)
                        .scaleExtent([1, 20])
         this.zoomer.on('zoom', () => {
@@ -40,16 +39,21 @@ module.exports = React.createClass({
         })
         this.svg.call(this.zoomer)
 
-        // FIXME
-        setTimeout(() => this.zoomToFeature(ZOOM_FEATURES.Toronto), 3000)
-        setTimeout(() => this.zoomToFeature(ZOOM_FEATURES.Montreal), 6000)
-
         if (this.props.districts) this.drawDistricts(this.props.districts)
     },
 
-    zoomToFeature(zoomTarget) {
-        // WIP, see http://bl.ocks.org/mbostock/4699541
-        // TODO: handle null case
+    // Zoom to a specific district, using a key into ZOOM_FEATURES
+    // See http://bl.ocks.org/mbostock/4699541
+    zoomToFeature(evt) {
+        var zoomTarget = ZOOM_FEATURES[evt.target.value]
+        if (!zoomTarget || !zoomTarget.id) {
+            // Handle "Canada" case, as well as any invalid value, by
+            // zooming all the way out:
+            return this.svg.transition().duration(1000).call(
+                this.zoomer.translate([0, 0]).scale(1).event
+            )
+        }
+
         let d = d3.select('.id_' + zoomTarget.id).data()[0]     // Gotta be a better way...
         let bounds = this.pathProjection.bounds(d)
         let [x, y] = [bounds[0][0], bounds[0][1]]       // Use top-left corner for simplicity
@@ -102,6 +106,15 @@ module.exports = React.createClass({
 
     render() {
         const height = IS_PORTRAIT ? Math.min(HEIGHT, WIDTH) : HEIGHT
-        return d('svg.mapRoot', { width: WIDTH, height: height })
+        return d('div.mapWrap', [
+            d('div.zoomControls', [
+                'Zoom to: ',
+                d('select',
+                    { onChange: this.zoomToFeature },
+                    Object.keys(ZOOM_FEATURES).map((k) => d('option', { key: k }, k))
+                )
+            ]),
+            d('svg.mapRoot@svg', { width: WIDTH, height: height })
+        ])
     }
 })

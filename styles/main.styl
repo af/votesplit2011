@@ -213,6 +213,11 @@ section.selected
     .barWrap
         height: 0.6 * $barHeight
 
+.zoomControls
+    position: absolute
+    background: rgba(#fff, 0.8)
+    padding: 0.5 * $sidebarPadding
+
 // Styles for the TimeoutTransitionGroup on the sidebar:
 .selected
     transition: transform 0.2s
@@ -244,3 +249,6 @@ section.selected
 @media screen and (min-width: 700px)
     .mapRoot
         padding-left: 0.3 * $sidebarWidth      // Map centering hack
+
+    .zoomControls
+        right: 0

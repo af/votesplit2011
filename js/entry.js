@@ -10,7 +10,7 @@ require('./analytics')()
 
 const ElectionMap = require('./map')
 const BarChart = require('./barchart')
-const { PARTIES, SEAT_COUNT } = require('./constants')
+const { PARTIES, SEAT_COUNT, ZOOM_FEATURES } = require('./constants')
 
 let shallowClone = o => {
     let newObj = {}
