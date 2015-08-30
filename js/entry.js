@@ -10,7 +10,7 @@ require('./analytics')()
 
 const ElectionMap = require('./map')
 const BarChart = require('./barchart')
-const { PARTIES, SEAT_COUNT, ZOOM_FEATURES } = require('./constants')
+const { PARTIES, SEAT_COUNT } = require('./constants')
 
 let shallowClone = o => {
     let newObj = {}
@@ -74,20 +74,16 @@ let SplitterForm = React.createClass({
 
         return d('form.splitForm', [
             d('h3', 'Redistribute votes'),
-            d('label.percent', [
-                d('select@percent',
-                    { onChange, value: split.percent },
-                    percentChoices.map(arrayToOptions)
-                ),
-                '% of',
-            ]),
-            d('label.from', [
+            d('div.voteFlow', [
                 d('select@from', { onChange, value: split.from }, PARTIES.map(arrayToOptions)),
-                'voters to',
-            ]),
-            d('label.to', [
+                d('label.percent', [
+                    d('select@percent',
+                        { onChange, value: split.percent },
+                        percentChoices.map(arrayToOptions)
+                    ),
+                    ' %'
+                ]),
                 d('select@to', { onChange, value: split.to || PARTIES[1] }, PARTIES.map(arrayToOptions)),
-                'instead'
             ]),
 
             d('div.examples', [

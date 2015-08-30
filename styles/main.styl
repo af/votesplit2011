@@ -121,15 +121,33 @@ section.selected
         margin-top: 0
         color: rgba(white, 0.9)
 
-    label
+    .voteFlow
         display: flex
         align-items: center
         line-height: 0.9
-        margin: 0.2em 0
+        margin: 0.5em 0
+        margin-right: 2rem
 
-    select
-        margin-right: 3px
+        .percent
+            flex: 1
+            text-align: center
+            background: darken($nonPartisanPurple, 30%)
+            padding: 4px 0
+            margin: 0 20px 0 10px
 
+            &:before
+                content: ''
+                display: inline-block
+                float: right
+                margin: -10px -12px -10px 0
+                border-left: 19px solid darken($nonPartisanPurple, 30%)
+                border-top: 19px solid transparent
+                border-bottom: 19px solid transparent
+
+            select
+                background: none
+                color: white
+                border: 1px solid rgba(white, 0.3)
 
 .district
     cursor: pointer
