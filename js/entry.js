@@ -63,7 +63,7 @@ let SplitterForm = React.createClass({
             to: this.refs.to.getDOMNode().value,
             percent: +this.refs.percent.getDOMNode().value
         }
-        if (split.from !== split.to) this.props.changeCallback(split)
+        this.props.changeCallback(split)
     },
 
     render() {
@@ -78,7 +78,7 @@ let SplitterForm = React.createClass({
                 d('select@from', { onChange, value: split.from }, PARTIES.map(arrayToOptions)),
                 d('label.percent', [
                     d('select@percent',
-                        { onChange, value: split.percent },
+                        { onChange, value: split.percent || 0 },
                         percentChoices.map(arrayToOptions)
                     ),
                     ' %'
