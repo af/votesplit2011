@@ -146,32 +146,40 @@ let App = React.createClass({
     },
 
     computeVotes(splitObj, districts) {
-        // Clone the districts arrays so we don't overwrite the original data:
-        let seatTotals = {}
+        // Clone the districts arrays so we don't overwrite the original data,
+        // and compute the vote totals and winner for each riding, based on a
+        // split/redistribution object:
         const actualVotes = this.state.originalDistricts.map(d => shallowClone(d.properties))
         districts = districts || this.state.originalDistricts.map(d => shallowClone(d))
+        districts = districts.map((d, idx) => this.computeRiding(d, actualVotes[idx], splitObj))
 
-        districts = districts.map((d, idx) => {
-            // Apply the vote split:
-            let votes = actualVotes[idx]
-            if (splitObj && votes[splitObj.to]) { // Assume no candidate in riding if 0 votes
-                let splitAmount = Math.round((splitObj.percent * votes[splitObj.from]) / 100)
-                votes[splitObj.to] = votes[splitObj.to] + splitAmount
-                votes[splitObj.from] = votes[splitObj.from] - splitAmount
-            }
-
-            let winReducer = (max, next) => next.votes > max.votes ? next : max
-            let winner = PARTIES.map(party => ({ name: party, votes: votes[party] }))
-                                .reduce(winReducer, { votes: 0 })
-            d.properties = votes
-            d.properties.winner = winner
-            seatTotals[winner.name] = seatTotals[winner.name] + 1 || 1
-            return d
-        })
-
+        // Figure out how many seats each party got, and if no split was applied,
+        // also save the results as state.actualTotals:
+        const seatTotals = districts.reduce((results, d) => {
+            let winningParty = d.properties.winner.name
+            results[winningParty] = (results[winningParty] + 1) || 1
+            return results
+        }, {})
         const saveActuals = (!this.state.actualTotals && (!splitObj || !splitObj.percent))
         const actualTotals = saveActuals ? seatTotals : this.state.actualTotals
+
         this.setState({ splitObj, seatTotals, actualTotals, districts, isLoaded: true })
+    },
+
+    computeRiding(d, votes, splitObj) {
+        if (splitObj && votes[splitObj.to]) { // Assume no candidate in riding if 0 votes
+            // FIXME: support strategic & multiple parties here!
+            let splitAmount = Math.round((splitObj.percent * votes[splitObj.from]) / 100)
+            votes[splitObj.to] = votes[splitObj.to] + splitAmount
+            votes[splitObj.from] = votes[splitObj.from] - splitAmount
+        }
+
+        let winReducer = (max, next) => next.votes > max.votes ? next : max
+        let winner = PARTIES.map(party => ({ name: party, votes: votes[party] }))
+                            .reduce(winReducer, { votes: 0 })
+        d.properties = votes
+        d.properties.winner = winner
+        return d
     },
 
     onSplitChange(splitObj) {
