@@ -39,7 +39,6 @@ module.exports = React.createClass({
     render() {
         const { dataMap } = this.props
         if (!dataMap) return d('div.barChart');
-        console.log('markers', this.props.markers)
 
         const renderItem = this.renderSingleBar.bind(this, dataMap)
         return d('div.barChart', PARTIES_WITH_OTHER.map(renderItem))
