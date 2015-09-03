@@ -50,7 +50,7 @@ let SplitterForm = React.createClass({
     displayName: 'SplitterForm',
     propTypes: {
         splitObj: React.PropTypes.shape({
-            from: React.PropTypes.oneOf([...PARTIES, PROGRESSIVES]).isRequired,
+            from: React.PropTypes.oneOf([...PARTIES, PROGRESSIVES.join(',')]).isRequired,
             to: React.PropTypes.oneOf([...PARTIES, STRATEGIC]).isRequired,
             percent: React.PropTypes.number.isRequired
         }),
@@ -67,7 +67,7 @@ let SplitterForm = React.createClass({
     },
 
     render() {
-        let arrayToOptions = n => d('option', { key: n }, n)
+        let arrayToOptions = n => d('option', { key: n }, '' + n)
         let onChange = this.handleChange
         const percentChoices = [0, 5, 10, 20, 50, 100]
         const split = this.props.splitObj || {}
@@ -116,7 +116,7 @@ let App = React.createClass({
 
     // Set initial app state based on location.hash
     getStateFromHash(hash) {
-        let match = hash.match(/split=(\w{2,3})-(\d{1,3})-(\w{2,})(?:&select=(\d+))?/)
+        let match = hash.match(/split=([\w,]{2,})-(\d{1,3})-(\w{2,})(?:&select=(\d+))?/)
         if (!match) return {}
 
         // For the "fullMatch" throwaway variable:
@@ -179,11 +179,14 @@ let App = React.createClass({
             boostedParty = strategicChoice.name
         }
 
-        if (splitObj && votes[boostedParty]) { // Assume no candidate in riding if 0 votes
-            // FIXME: support multiple party inputs here
-            let splitAmount = Math.round((splitObj.percent * votes[splitObj.from]) / 100)
+        let addRedistribution = (decreasedParty) => {
+            let splitAmount = Math.round((splitObj.percent * votes[decreasedParty]) / 100)
             votes[boostedParty] = votes[boostedParty] + splitAmount
-            votes[splitObj.from] = votes[splitObj.from] - splitAmount
+            votes[decreasedParty] = votes[decreasedParty] - splitAmount
+        }
+
+        if (splitObj && votes[boostedParty]) { // Assume no candidate in riding if 0 votes
+            splitObj.from.split(',').forEach(addRedistribution)
         }
 
         var sortedResults = PARTIES.map(party => ({ name: party, votes: votes[party] }))
