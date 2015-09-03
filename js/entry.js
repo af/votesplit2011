@@ -10,7 +10,7 @@ require('./analytics')()
 
 const ElectionMap = require('./map')
 const BarChart = require('./barchart')
-const { PARTIES, SEAT_COUNT } = require('./constants')
+const { PARTIES, PROGRESSIVES, SEAT_COUNT, STRATEGIC } = require('./constants')
 
 let shallowClone = o => {
     let newObj = {}
@@ -50,8 +50,8 @@ let SplitterForm = React.createClass({
     displayName: 'SplitterForm',
     propTypes: {
         splitObj: React.PropTypes.shape({
-            from: React.PropTypes.oneOf(PARTIES).isRequired,
-            to: React.PropTypes.oneOf(PARTIES).isRequired,
+            from: React.PropTypes.oneOf([...PARTIES, PROGRESSIVES]).isRequired,
+            to: React.PropTypes.oneOf([...PARTIES, STRATEGIC]).isRequired,
             percent: React.PropTypes.number.isRequired
         }),
         changeCallback: React.PropTypes.func.isRequired
@@ -71,19 +71,20 @@ let SplitterForm = React.createClass({
         let onChange = this.handleChange
         const percentChoices = [0, 5, 10, 20, 50, 100]
         const split = this.props.splitObj || {}
+        const fromOptions = [...PARTIES, PROGRESSIVES].map(arrayToOptions)
+        const toOptions = [...PARTIES, STRATEGIC].map(arrayToOptions)
 
         return d('form.splitForm', [
             d('h3', 'Redistribute votes'),
             d('div.voteFlow', [
-                d('select@from', { onChange, value: split.from }, PARTIES.map(arrayToOptions)),
+                d('select@from', { onChange, value: split.from }, fromOptions),
                 d('label.percent', [
-                    d('select@percent',
-                        { onChange, value: split.percent || 0 },
+                    d('select@percent', { onChange, value: split.percent || 0 },
                         percentChoices.map(arrayToOptions)
                     ),
                     ' %'
                 ]),
-                d('select@to', { onChange, value: split.to || PARTIES[1] }, PARTIES.map(arrayToOptions)),
+                d('select@to', { onChange, value: split.to || PARTIES[1] }, toOptions)
             ]),
 
             d('div.examples', [
@@ -115,7 +116,7 @@ let App = React.createClass({
 
     // Set initial app state based on location.hash
     getStateFromHash(hash) {
-        let match = hash.match(/split=(\w{2,3})-(\d{1,3})-(\w{2,3})(?:&select=(\d+))?/)
+        let match = hash.match(/split=(\w{2,3})-(\d{1,3})-(\w{2,})(?:&select=(\d+))?/)
         if (!match) return {}
 
         // For the "fullMatch" throwaway variable:
@@ -166,20 +167,30 @@ let App = React.createClass({
         this.setState({ splitObj, seatTotals, actualTotals, districts, isLoaded: true })
     },
 
-    computeRiding(d, votes, splitObj) {
-        if (splitObj && votes[splitObj.to]) { // Assume no candidate in riding if 0 votes
-            // FIXME: support strategic & multiple parties here!
+    computeRiding(district, votes, splitObj) {
+        let boostedParty = splitObj && splitObj.to
+
+        // If we're simulating "strategic" voting, find out which progressive party
+        // had the best results in this riding, so we can boost its vote total:
+        if (boostedParty === STRATEGIC) {
+            let preSorted = PARTIES.map(party => ({ name: party, votes: votes[party] }))
+                                   .sort((r1, r2) => (r1.votes > r2.votes) ? -1 : 1)
+            let strategicChoice = preSorted.find(r => PROGRESSIVES.indexOf(r.name) > -1)
+            boostedParty = strategicChoice.name
+        }
+
+        if (splitObj && votes[boostedParty]) { // Assume no candidate in riding if 0 votes
+            // FIXME: support multiple party inputs here
             let splitAmount = Math.round((splitObj.percent * votes[splitObj.from]) / 100)
-            votes[splitObj.to] = votes[splitObj.to] + splitAmount
+            votes[boostedParty] = votes[boostedParty] + splitAmount
             votes[splitObj.from] = votes[splitObj.from] - splitAmount
         }
 
-        let winReducer = (max, next) => next.votes > max.votes ? next : max
-        let winner = PARTIES.map(party => ({ name: party, votes: votes[party] }))
-                            .reduce(winReducer, { votes: 0 })
-        d.properties = votes
-        d.properties.winner = winner
-        return d
+        var sortedResults = PARTIES.map(party => ({ name: party, votes: votes[party] }))
+                                   .sort((r1, r2) => (r1.votes > r2.votes) ? -1 : 1)
+        district.properties = votes
+        district.properties.winner = sortedResults[0]
+        return district
     },
 
     onSplitChange(splitObj) {

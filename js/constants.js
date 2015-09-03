@@ -3,8 +3,10 @@ const OTHER_PARTY = 'OTHER'
 
 module.exports = {
     PARTIES,
+    PROGRESSIVES: PARTIES.filter((p) => p !== 'CPC' && p !== 'BQ'),
     OTHER_PARTY,
     PARTIES_WITH_OTHER: [...PARTIES, OTHER_PARTY],
+    STRATEGIC: 'Strat',
     SEAT_COUNT: 308,
 
     // Mapping of names to zoom instructions
