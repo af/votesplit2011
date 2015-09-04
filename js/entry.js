@@ -1,18 +1,20 @@
 'use strict'
 
-let d3 = require('d3')
-let React = require('react')
-let d = require('jsnox')(React)
-let topojson = require('topojson')
-let TimeoutTransitionGroup = require('timeout-transition-group')
-require('array.prototype.find')     // polyfill
-require('./analytics')()
+import d3 from 'd3'
+import React from 'react'
+import topojson from 'topojson'
+import TimeoutTransitionGroup from 'timeout-transition-group'
+import 'array.prototype.find'     // polyfill
+import jsnox from 'jsnox'
+import analytics from './analytics'
+analytics()
+const d = jsnox(React)
 
-const ElectionMap = require('./map')
-const BarChart = require('./barchart')
-const { PARTIES, PROGRESSIVES, SEAT_COUNT, STRATEGIC } = require('./constants')
+import ElectionMap from './map'
+import BarChart from './barchart'
+import { PARTIES, PROGRESSIVES, SEAT_COUNT, STRATEGIC } from './constants'
 
-let shallowClone = o => {
+const shallowClone = o => {
     let newObj = {}
     for (let x in o) newObj[x] = o[x]
     return newObj

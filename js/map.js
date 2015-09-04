@@ -1,9 +1,10 @@
 'use strict'
 
-let d3 = require('d3')
-let React = require('react')
-let d = require('jsnox')(React)
-let { ZOOM_FEATURES } = require('./constants')
+import d3 from 'd3'
+import React from 'react'
+import jsnox from 'jsnox'
+const d = jsnox(React)
+import { ZOOM_FEATURES } from './constants'
 
 const WIDTH = Math.max(300, window.innerWidth)
 const HEIGHT = Math.max(400, window.innerHeight)
@@ -12,7 +13,7 @@ const IS_PORTRAIT = HEIGHT > WIDTH
 const DEFAULT_TRANSLATE = [WIDTH / 2, Math.min(HEIGHT, WIDTH)]
 
 
-module.exports = React.createClass({
+export default React.createClass({
     displayName: 'ElectionMap',
     propTypes: {
         districts: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,

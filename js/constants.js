@@ -1,7 +1,9 @@
+'use strict'
+
 const PARTIES = 'CPC,NDP,LPC,BQ,GPC'.split(',')
 const OTHER_PARTY = 'OTHER'
 
-module.exports = {
+export default {
     PARTIES,
     PROGRESSIVES: PARTIES.filter((p) => p !== 'CPC' && p !== 'BQ'),
     OTHER_PARTY,

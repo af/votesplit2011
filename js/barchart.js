@@ -1,8 +1,9 @@
 'use strict'
 
-const React = require('react')
-const d = require('jsnox')(React)
-const { PARTIES_WITH_OTHER, OTHER_PARTY } = require('./constants')
+import React from 'react'
+import jsnox from 'jsnox'
+const d = jsnox(React)
+import { PARTIES_WITH_OTHER, OTHER_PARTY } from './constants'
 
 
 module.exports = React.createClass({
@@ -44,5 +45,3 @@ module.exports = React.createClass({
         return d('div.barChart', PARTIES_WITH_OTHER.map(renderItem))
     }
 })
-
-
