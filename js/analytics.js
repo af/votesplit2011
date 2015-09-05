@@ -1,4 +1,5 @@
-export default function() {
+/* global ga */
+(function() {
     if (location.hostname === 'localhost') return;
 
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -8,4 +9,4 @@ export default function() {
 
     ga('create', 'UA-26427038-2', 'aaronfranks.com');
     ga('send', 'pageview');
-}
+}())

@@ -1,13 +1,12 @@
 'use strict'
 
+import 'array.prototype.find'     // polyfill
+import './analytics'
 import d3 from 'd3'
 import React from 'react'
 import topojson from 'topojson'
 import TimeoutTransitionGroup from 'timeout-transition-group'
-import 'array.prototype.find'     // polyfill
 import jsnox from 'jsnox'
-import analytics from './analytics'
-analytics()
 const d = jsnox(React)
 
 import ElectionMap from './map'
