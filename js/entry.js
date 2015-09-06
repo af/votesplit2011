@@ -68,9 +68,9 @@ let SplitterForm = React.createClass({
     },
 
     render() {
-        let arrayToOptions = n => d('option', { key: n }, '' + n)
-        let onChange = this.handleChange
-        const percentChoices = [0, 5, 10, 20, 50, 100]
+        const arrayToOptions = n => d('option', { key: n }, '' + n)
+        const onChange = this.handleChange
+        const percentChoices = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
         const split = this.props.splitObj || {}
         const fromOptions = [...PARTIES, PROGRESSIVES].map(arrayToOptions)
         const toOptions = [...PARTIES, STRATEGIC].map(arrayToOptions)
@@ -90,9 +90,9 @@ let SplitterForm = React.createClass({
 
             d('div.examples', [
                 d('h3', 'Examples: what if...'),
-                d('a[href=#split=GPC-100-NDP]', 'All Green voters went NDP'),
                 d('a[href=#split=NDP-50-LPC]', 'Half of NDP voters went Liberal'),
                 d('a[href=#split=LPC-50-NDP]', 'Half of Liberal voters went NDP'),
+                d('a[href=#split=GPC-100-Strat]', 'All Greens voted strategically'),
                 d('a[href=#]', '(reset to actual 2011 results)')
             ]),
         ])
@@ -215,18 +215,23 @@ let App = React.createClass({
         const districts = this.state.districts || []
         const selectedId = this.state.selectedDistrictId
         const selected = (districts || []).find(d => d.properties.districtId === selectedId)
+        const FPTPlink = d('a', {
+            target: '_blank',
+            href: 'https://en.wikipedia.org/wiki/First-past-the-post_voting'
+        }, 'FPTP')
 
         return d('div', [
             d('aside', [
                 d('section.results', [
                     d('h1', '2011 Vote Splitter'),
-                    d('div.preamble',
-                        `A common complaint about the Canadian electoral
-                         system is that the non-Conservative parties split
-                         the progressive vote amongst themselves, ensuring
-                         CPC success in many ridings. Use the form below to
+                    d('div.preamble', [
+                        `A common gripe about Canada's `, FPTPlink,
+                        ` voting system is how the progressive vote is split
+                         among several parties, giving the Conservatives
+                         easy wins in many ridings. Use the form below to
                          redistribute votes from the 2011 election and see how
-                         it would have affected the results.`),
+                         it would have affected the results.`
+                    ]),
 
                     d(SplitterForm, {
                         splitObj: this.state.splitObj,
