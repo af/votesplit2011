@@ -1,6 +1,6 @@
 'use strict'
 
-import 'array.prototype.find'     // polyfill
+import 'babel/polyfill'
 import './analytics'
 import d3 from 'd3'
 import React from 'react'
