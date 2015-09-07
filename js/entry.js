@@ -92,7 +92,7 @@ let SplitterForm = React.createClass({
                 d('h3', 'Examples: what if...'),
                 d('a[href=#split=NDP-50-LPC]', 'Half of NDP voters went Liberal'),
                 d('a[href=#split=LPC-50-NDP]', 'Half of Liberal voters went NDP'),
-                d('a[href=#split=GPC-100-Strat]', 'All Greens voted strategically'),
+                d(`a[href=#split=GPC-100-${STRATEGIC}]`, 'All Greens voted strategically'),
                 d('a[href=#]', '(reset to actual 2011 results)')
             ]),
         ])

@@ -8,7 +8,7 @@ export default {
     PROGRESSIVES: PARTIES.filter((p) => p !== 'CPC' && p !== 'BQ'),
     OTHER_PARTY,
     PARTIES_WITH_OTHER: [...PARTIES, OTHER_PARTY],
-    STRATEGIC: 'Strat',
+    STRATEGIC: 'Strategic',
     SEAT_COUNT: 308,
 
     // Mapping of names to zoom instructions
