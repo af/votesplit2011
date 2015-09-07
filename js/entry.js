@@ -38,7 +38,7 @@ let DistrictInfo = React.createClass({
             d('h2', name),
             d(BarChart, {
                 dataMap: district,
-                barMax: 60000,
+                barMax: district.totalVotes,    // Note: different scale across ridings
                 showOther: true,
                 onZeroValue: () => null     // Don't render bars where there are no votes
             })

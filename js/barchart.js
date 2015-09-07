@@ -21,6 +21,7 @@ module.exports = React.createClass({
         const value = results[partyKey] || 0
         const barScale = 100*value/barMax
         const logo = require(`../assets/logos/${partyKey}.svg`)
+        const isMajority = value >= (barMax / 2)
 
         if (!showOther && partyKey === OTHER_PARTY) return null
         if (!value && onZeroValue) return onZeroValue()
@@ -29,6 +30,7 @@ module.exports = React.createClass({
             d('span.total', value),
             d('div.barWrap', [
                 d('div.bar', { style: { width: barScale + '%' }}),
+                isMajority && d('div.majority', 'Majority'),
                 markers && d('div.marker', {
                     style: { left: 100*markers[partyKey]/barMax + '%' },
                     title: 'Actual 2011 result: ' + markers[partyKey]

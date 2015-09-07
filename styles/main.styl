@@ -199,6 +199,14 @@ section.selected
         &:before
             content: ''
 
+    .majority
+        position: absolute
+        left: 5px
+        top: 0
+        color: rgba(white, 0.6)
+        text-transform: uppercase
+        font-weight: bold
+
     for $key, $colour in $partyColours
         &.{$key}
             .bar
