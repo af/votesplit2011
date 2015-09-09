@@ -207,6 +207,9 @@ section.selected
         text-transform: uppercase
         font-weight: bold
 
+        .results &
+            line-height: $barHeight
+
     for $key, $colour in $partyColours
         &.{$key}
             .bar
