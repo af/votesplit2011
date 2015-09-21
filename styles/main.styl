@@ -160,6 +160,9 @@ section.selected
         opacity: 0.9
         stroke-width: 2px
 
+    &.battleground
+        mask: url(#mask-stripe)
+
     for $key, $colour in $partyColours
         &.{$key}
             fill: $colour

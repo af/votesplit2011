@@ -22,7 +22,10 @@ export default React.createClass({
     },
 
     componentDidMount() {
-        this.svg = d3.select(this.refs.svg.getDOMNode())
+        let svgNode = this.refs.svg.getDOMNode()
+        svgNode.appendChild(document.querySelector('svg.pattern defs'))     // FIXME: ugly hack
+
+        this.svg = d3.select(svgNode)
         this.vizRoot = this.svg.append('g').attr('class', 'container')
         this.projection = d3.geo.albers()
                                 .scale(IS_PORTRAIT ? WIDTH : WIDTH - SIDEBAR_WIDTH)
@@ -87,7 +90,9 @@ export default React.createClass({
             .attr('class', d => {
                 let isSelected = (d.properties.districtId === this.props.selectedDistrictId)
                 let selectedClass = isSelected ? 'selected' : ''
-                return `district ${d.properties.winner.name} ${selectedClass} id_${d.properties.districtId}`
+                let battlegroundClass = d.properties.isBattleground ? 'battleground' : ''
+                return `district ${d.properties.winner.name} ${selectedClass}
+                        ${battlegroundClass} id_${d.properties.districtId}`
             })
             .on('click', function(d) {
                 let selectedId = component.selectDistrict(d.properties)

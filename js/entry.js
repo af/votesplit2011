@@ -173,12 +173,10 @@ let App = React.createClass({
 
         // If we're simulating "strategic" voting, find out which progressive party
         // had the best results in this riding, so we can boost its vote total:
-        if (boostedParty === STRATEGIC) {
-            let preSorted = PARTIES.map(party => ({ name: party, votes: votes[party] }))
-                                   .sort((r1, r2) => (r1.votes > r2.votes) ? -1 : 1)
-            let strategicChoice = preSorted.find(r => PROGRESSIVES.indexOf(r.name) > -1)
-            boostedParty = strategicChoice.name
-        }
+        let preSorted = PARTIES.map(party => ({ name: party, votes: votes[party] }))
+                               .sort((r1, r2) => (r1.votes > r2.votes) ? -1 : 1)
+        let strategicChoice = preSorted.find(r => PROGRESSIVES.indexOf(r.name) > -1)
+        if (boostedParty === STRATEGIC) boostedParty = strategicChoice.name
 
         let addRedistribution = (decreasedParty) => {
             let splitAmount = Math.round((splitObj.percent * votes[decreasedParty]) / 100)
@@ -193,6 +191,7 @@ let App = React.createClass({
         var sortedResults = PARTIES.map(party => ({ name: party, votes: votes[party] }))
                                    .sort((r1, r2) => (r1.votes > r2.votes) ? -1 : 1)
         district.properties = votes
+        district.properties.isBattleground = Math.abs(votes[strategicChoice.name] - votes.CPC) < votes.totalVotes * 0.1
         district.properties.winner = sortedResults[0]
         return district
     },
@@ -273,4 +272,4 @@ let App = React.createClass({
     }
 })
 
-React.render(d(App), document.body)
+React.render(d(App), document.querySelector('.appContainer'))

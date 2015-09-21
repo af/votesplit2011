@@ -7,6 +7,22 @@
     <meta name="viewport" content="width=device-width">
 </head>
 <body>
+    <!-- SVG pattern fill -->
+    <!-- inspired by http://bl.ocks.org/jfsiii/7772281 -->
+    <svg class="pattern" height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1">
+      <defs>
+          <pattern id="pattern-stripe" width="4" height="4"
+                   patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="2" height="4" transform="translate(0,0)" fill="rgba(255,255,255,0.7)"></rect>
+              <rect x="2" y="0" width="2" height="4" transform="translate(0,0)" fill="#fff"></rect>
+          </pattern>
+          <mask id="mask-stripe">
+              <rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-stripe)" />
+          </mask>
+      </defs>
+    </svg>
+
+    <div class="appContainer"></div>
     <script src="./assets/vendor.js"></script>
     <script src="./assets/app.js"></script>
 </body>
