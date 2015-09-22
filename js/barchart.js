@@ -25,18 +25,18 @@ module.exports = React.createClass({
 
         if (!showOther && partyKey === OTHER_PARTY) return null
         if (!value && onZeroValue) return onZeroValue()
-        return d(`div.barContainer.${partyKey}`, [
+        return d(`div.barContainer.${partyKey}^`,
             d('img.logo', { src: logo, alt: partyKey }),
             d('span.total', value),
-            d('div.barWrap', [
+            d('div.barWrap',
                 d('div.bar', { style: { width: barScale + '%' }}),
                 isMajority && d('div.majority', 'Majority'),
                 markers && d('div.marker', {
                     style: { left: 100*markers[partyKey]/barMax + '%' },
                     title: 'Actual 2011 result: ' + markers[partyKey]
                 })
-            ])
-        ])
+            )
+        )
     },
 
     render() {

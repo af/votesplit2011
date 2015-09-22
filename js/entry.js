@@ -34,7 +34,7 @@ let DistrictInfo = React.createClass({
         for (let p of PARTIES) other -= (district[p] || 0)
         district.OTHER = other
 
-        return d('div.districtInfo', [
+        return d('div.districtInfo',
             d('h2', name),
             d(BarChart, {
                 dataMap: district,
@@ -42,7 +42,7 @@ let DistrictInfo = React.createClass({
                 showOther: true,
                 onZeroValue: () => null     // Don't render bars where there are no votes
             })
-        ])
+        )
     }
 })
 
@@ -75,27 +75,27 @@ let SplitterForm = React.createClass({
         const fromOptions = [...PARTIES, PROGRESSIVES].map(arrayToOptions)
         const toOptions = [...PARTIES, STRATEGIC].map(arrayToOptions)
 
-        return d('form.splitForm', [
+        return d('form.splitForm',
             d('h3', 'Redistribute votes'),
-            d('div.voteFlow', [
+            d('div.voteFlow',
                 d('select@from', { onChange, value: split.from }, fromOptions),
-                d('label.percent', [
+                d('label.percent',
                     d('select@percent', { onChange, value: split.percent || 0 },
                         percentChoices.map(arrayToOptions)
                     ),
                     ' %'
-                ]),
+                ),
                 d('select@to', { onChange, value: split.to || PARTIES[1] }, toOptions)
-            ]),
+            ),
 
-            d('div.examples', [
+            d('div.examples',
                 d('h3', 'Examples: what if...'),
                 d('a[href=#split=NDP-50-LPC]', 'Half of NDP voters went Liberal'),
                 d('a[href=#split=LPC-50-NDP]', 'Half of Liberal voters went NDP'),
                 d(`a[href=#split=GPC-100-${STRATEGIC}]`, 'All Greens voted strategically'),
                 d('a[href=#]', '(reset to actual 2011 results)')
-            ]),
-        ])
+            )
+        )
     }
 })
 
@@ -219,18 +219,18 @@ let App = React.createClass({
             href: 'https://en.wikipedia.org/wiki/First-past-the-post_voting'
         }, 'FPTP')
 
-        return d('div', [
-            d('aside', [
-                d('section.results', [
+        return d('div',
+            d('aside',
+                d('section.results',
                     d('h1', '2011 Vote Splitter'),
-                    d('div.preamble', [
+                    d('div.preamble',
                         `A common gripe about Canada's `, FPTPlink,
                         ` voting system is how the progressive vote is split
                          among several parties, giving the Conservatives
                          easy wins in many ridings. Use the form below to
                          redistribute votes from the 2011 election and see how
                          it would have affected the results.`
-                    ]),
+                    ),
 
                     d(SplitterForm, {
                         splitObj: this.state.splitObj,
@@ -242,22 +242,21 @@ let App = React.createClass({
                         dataMap: this.state.seatTotals,
                         barMax: SEAT_COUNT,
                         markers: this.state.actualTotals
-                    }),
-                ]),
+                    })
+                ),
                 d(TimeoutTransitionGroup, {
                     enterTimeout: 400,
                     leaveTimeout: 400,
                     transitionName: 'sidebar',
                     component: 'div'
-                }, [
-                    selected && d('section.selected', [
+                }, selected && d('section.selected',
                         d('button.close', {
                             onClick: () => this.setState({ selectedDistrictId: null })
                         }),
                         d(DistrictInfo, { district: selected.properties })
-                    ])
-                ])
-            ]),
+                    )
+                )
+            ),
             d(ElectionMap, {
                 districts: districts,
                 selectedDistrictId: this.state.selectedDistrictId,
@@ -268,7 +267,7 @@ let App = React.createClass({
                     })
                 }
             })
-        ])
+        )
     }
 })
 
