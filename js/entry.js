@@ -223,7 +223,7 @@ let App = React.createClass({
             d('aside',
                 d('section.results',
                     d('h1', '2011 Vote Splitter'),
-                    d('div.preamble',
+                    d('div.preamble', null,
                         `A common gripe about Canada's `, FPTPlink,
                         ` voting system is how the progressive vote is split
                          among several parties, giving the Conservatives

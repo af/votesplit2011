@@ -113,11 +113,11 @@ export default React.createClass({
     render() {
         const height = IS_PORTRAIT ? Math.min(HEIGHT, WIDTH) : HEIGHT
         return d('div.mapWrap',
-            d('div.zoomControls',
+            d('div.zoomControls', null,
                 'Zoom to: ',
                 d('select',
                     { onChange: this.zoomToFeature },
-                    Object.keys(ZOOM_FEATURES).map((k) => d('option', { key: k }, k))
+                    Object.keys(ZOOM_FEATURES).map((k) => d(`option.${k}^`, k))
                 )
             ),
             d('svg.mapRoot@svg', { width: WIDTH, height: height })
