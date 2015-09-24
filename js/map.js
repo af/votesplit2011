@@ -36,7 +36,7 @@ export default React.createClass({
                        .translate([0,0])
                        .size([WIDTH, HEIGHT])
                        .scale(1)
-                       .scaleExtent([1, 20])
+                       .scaleExtent([1, 22])
         this.zoomer.on('zoom', () => {
             let evt = d3.event
             this.vizRoot.attr('transform', `translate(${evt.translate})scale(${evt.scale})`)

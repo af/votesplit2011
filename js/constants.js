@@ -18,7 +18,7 @@ export default {
         Calgary:    { id: 48006, scale: 17 },
         Edmonton:   { id: 48018, scale: 17 },
         Winnipeg:   { id: 46011, scale: 14 },
-        Toronto:    { id: 35106, scale: 18 },
-        Montreal:   { id: 24003, scale: 16 },
+        Toronto:    { id: 35106, scale: 20 },
+        Montreal:   { id: 24003, scale: 18 },
     }
 }
