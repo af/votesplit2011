@@ -62,9 +62,15 @@ aside
                 content: '» '
 
     .battleCount
-        margin-left: 10px
+        margin-left: 20px
         font-weight: normal
         font-size: 0.8em
+
+        &:before
+            display: inline-block
+            margin-right: 5px
+            content: url(../assets/hatched.svg)
+            vertical-align: middle
 
     section
         padding: $sidebarPadding

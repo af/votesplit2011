@@ -243,7 +243,7 @@ let App = React.createClass({
 
                     d('h3.seatHeading', null,
                         'Seat Results',
-                        d('span.battleCount', `(${battlegrounds.length} battlegrounds)`)
+                        d('span.battleCount', `${battlegrounds.length} battlegrounds`)
                     ),
                     this.state.seatTotals && d(BarChart, {
                         dataMap: this.state.seatTotals,

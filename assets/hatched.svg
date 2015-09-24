@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="15px" height="15px" viewBox="0 0 15 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.3 (12072) - http://www.bohemiancoding.com/sketch -->
+    <title>Path 1 + Path 1 Copy + Path 1 Copy 2 + Path 1 Copy 3 Mask</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="15" height="15"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Path-1-+-Path-1-Copy-+-Path-1-Copy-2-+-Path-1-Copy-3-Mask" sketch:type="MSLayerGroup">
+            <mask id="mask-2" sketch:name="Mask" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Mask" fill="#D8D8D8" sketch:type="MSShapeGroup" xlink:href="#path-1"></use>
+            <path d="M-6.74138327,13.3438649 L17.4895676,-10.8870859 L15.4373292,-12.9393243 L-8.8221964,11.3202012 L-6.74138327,13.3438649 Z" id="Path-1" fill="#B5B5B5" sketch:type="MSShapeGroup" mask="url(#mask-2)"></path>
+            <path d="M-4.71197151,19.079159 L19.5189793,-5.15179183 L17.4667409,-7.20403021 L-6.79278464,17.0554954 L-4.71197151,19.079159 Z" id="Path-1-Copy" fill="#B5B5B5" sketch:type="MSShapeGroup" mask="url(#mask-2)"></path>
+            <path d="M-1.27079504,23.6673943 L22.9601558,-0.563556532 L20.9079174,-2.61579492 L-3.35160817,21.6437307 L-1.27079504,23.6673943 Z" id="Path-1-Copy-2" fill="#B5B5B5" sketch:type="MSShapeGroup" mask="url(#mask-2)"></path>
+            <path d="M2.08081313,28.1415946 L26.311764,3.91064378 L24.2595256,1.85840539 L0,26.117931 L2.08081313,28.1415946 Z" id="Path-1-Copy-3" fill="#B5B5B5" sketch:type="MSShapeGroup" mask="url(#mask-2)"></path>
+        </g>
+    </g>
+</svg>
