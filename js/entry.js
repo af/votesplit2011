@@ -170,12 +170,13 @@ let App = React.createClass({
 
     computeRiding(district, votes, splitObj) {
         let boostedParty = splitObj && splitObj.to
+        const sortFn = (r1, r2) => (r1.votes > r2.votes) ? -1 : 1
+        const mapPartiesToNameAndVotes = party => ({ name: party, votes: votes[party] })
 
         // If we're simulating "strategic" voting, find out which progressive party
         // had the best results in this riding, so we can boost its vote total:
-        let preSorted = PARTIES.map(party => ({ name: party, votes: votes[party] }))
-                               .sort((r1, r2) => (r1.votes > r2.votes) ? -1 : 1)
-        let strategicChoice = preSorted.find(r => PROGRESSIVES.indexOf(r.name) > -1)
+        const preSorted = PARTIES.map(mapPartiesToNameAndVotes).sort(sortFn)
+        const strategicChoice = preSorted.find(r => PROGRESSIVES.indexOf(r.name) > -1)
         if (boostedParty === STRATEGIC) boostedParty = strategicChoice.name
 
         let addRedistribution = (decreasedParty) => {
@@ -188,10 +189,12 @@ let App = React.createClass({
             splitObj.from.split(',').forEach(addRedistribution)
         }
 
-        var sortedResults = PARTIES.map(party => ({ name: party, votes: votes[party] }))
-                                   .sort((r1, r2) => (r1.votes > r2.votes) ? -1 : 1)
+        // Get re-sorted results after votes object has been mutated
+        // Note: the riding is considered a "battleground" if the diff between
+        // the CPC and their top competition is < 5% of the riding's total votes
+        const sortedResults = PARTIES.map(mapPartiesToNameAndVotes).sort(sortFn)
         district.properties = votes
-        district.properties.isBattleground = Math.abs(votes[strategicChoice.name] - votes.CPC) < votes.totalVotes * 0.1
+        district.properties.isBattleground = Math.abs(votes[strategicChoice.name] - votes.CPC) < votes.totalVotes * 0.05
         district.properties.winner = sortedResults[0]
         return district
     },
@@ -213,7 +216,8 @@ let App = React.createClass({
 
         const districts = this.state.districts || []
         const selectedId = this.state.selectedDistrictId
-        const selected = (districts || []).find(d => d.properties.districtId === selectedId)
+        const selected = districts.find(d => d.properties.districtId === selectedId)
+        const battlegrounds = districts.filter(d => d.properties.isBattleground)
         const FPTPlink = d('a', {
             target: '_blank',
             href: 'https://en.wikipedia.org/wiki/First-past-the-post_voting'
@@ -237,7 +241,10 @@ let App = React.createClass({
                         changeCallback: this.onSplitChange
                     }),
 
-                    d('h3.seatHeading', 'Seat Results'),
+                    d('h3.seatHeading', null,
+                        'Seat Results',
+                        d('span.battleCount', `(${battlegrounds.length} battlegrounds)`)
+                    ),
                     this.state.seatTotals && d(BarChart, {
                         dataMap: this.state.seatTotals,
                         barMax: SEAT_COUNT,
