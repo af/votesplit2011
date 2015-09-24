@@ -221,7 +221,7 @@ let App = React.createClass({
         const FPTPlink = d('a', {
             target: '_blank',
             href: 'https://en.wikipedia.org/wiki/First-past-the-post_voting'
-        }, 'FPTP')
+        }, 'First Past the Post')
 
         return d('div',
             d('aside',
